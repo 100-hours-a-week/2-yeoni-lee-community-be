@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="6_add_memo.css">
+    <title>게시글 추가</title>
+</head>
+<body>
+    <section class="wrap">
+        <h1 class="name">게시글 추가</h1>
+        <article class="payload">
+            <form id="memo-form" method="POST" action="/add_memo">
+                <p class="description">제목*</p>
+                <hr class="horizontal-rule"/>
+                <input type="text" id="title" name="title" required>
+                <hr class="horizontal-rule"/>
+                <p class="description">내용*</p>
+                <hr class="horizontal-rule"/>
+                <input type="text" id = "context" name="context" required>
+                <hr class="horizontal-rule"/>      
+                <p class="description">이미지</p>
+                <input type="file" id="memo_img" name="memo_img" accept="image/*">
+                <p class="description">작성시간</p>
+                <input type="datetime-local" id = "time" name="time">
+                <p class="description">작성자</p>
+                <input type="text" id = "username" name="username">
+                <article class="buttons">
+                    <button class="button" type="submit" href="/3_memo_list.html" class="button">추가하기</button>
+                </article>
+            </form>
+        </article>
+    </section>
+</body>
+</html>

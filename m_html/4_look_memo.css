@@ -1,0 +1,175 @@
+/* 폰트 추가 */
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap");
+
+/* 기본 설정 */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #E0CFE3;
+    font-family: "Noto Sans KR", sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+}
+
+.wrap {
+    width: 100%;
+    max-width: 600px;
+    background-color: #E0CFE3;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.name {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* 게시물 제목 */
+.post-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* 게시물 정보 */
+.post-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.post-info .author {
+    font-weight: 500;
+}
+
+.post-info .time {
+    color: #999;
+    font-size: 12px;
+}
+
+/* 수정/삭제 버튼 */
+.action-buttons, .comment-actions {
+    display: flex;
+    gap: 10px;
+}
+
+button.edit, button.delete {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+button.edit:hover, button.delete:hover {
+    background-color: #d8d8d8;
+}
+
+/* 본문 내용 */
+.content {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333;
+    margin-bottom: 20px;
+    white-space: pre-wrap;
+}
+
+/* 좋아요, 조회수, 댓글수 */
+.post-stats-bottom {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+}
+
+/* 가로 줄 */
+.horizontal-rule {
+    border: none;
+    border-top: 1px solid #000000;
+    margin: 20px 0;
+}
+
+/* 댓글 섹션 */
+.comment-section {
+    background-color: #E0CFE3;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.comment-header {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.comment-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.comment-input input {
+    flex: 1;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.submit-comment {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    background-color: #9575cd;
+    cursor: pointer;
+}
+
+.submit-comment:hover {
+    background-color: #7a60b4;
+}
+
+/* 댓글 내용 */
+.comment {
+    padding: 10px;
+    background-color: #E0CFE3;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.comment .author {
+    font-size: 14px;
+    flex-direction: row;
+    font-weight: 500;
+    color: #555;
+}
+
+.comment .time {
+    color: #999;
+    font-size: 12px;
+    margin-left: auto;
+}
+
+.comment-content {
+    font-size: 14px;
+    color: #333;
+    margin: 5px 0;
+}

@@ -1,0 +1,56 @@
+/* 폰트 추가 */
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap");
+
+/* 페이지 설정 */
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center; /* 수직 가운데 정렬 */
+  background-color: #EEE9EF;
+  font-family: "Noto Sans KR", sans-serif;
+}
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 400px;
+  justify-content: center;
+  align-items: center;
+  background-color: #EEE9EF;
+  stroke: #050508;
+  stroke-width: 100%;
+  padding: 60px 0;
+}
+
+/* 버튼들 */
+.buttons {
+    padding: 40px 0;
+    display: flex;
+    flex-direction: column;
+    row-gap: 15px;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .buttons .button {
+    width: 500%;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #C9ADD4;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+.profile {
+    width: 100%;
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    background-color: #EEE9EF; /* 배경색 */
+  }
