@@ -1,3 +1,5 @@
+//app.js
+
 const express = require('express');
 const path = require('path');
 const userRoutes = require('./routes/route'); // route.js 파일 사용
@@ -9,7 +11,7 @@ const PORT = 8080;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // URL-encoded 데이터 파싱
 app.use(express.static(path.join(__dirname, 'm_html'))); // 정적 파일 서빙
-
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // 사용자 라우트 설정
 app.use('/', userRoutes);
 

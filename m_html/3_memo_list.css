@@ -36,6 +36,8 @@ body {
     border-radius: 25px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
+    cursor: pointer; /* 마우스를 올렸을 때 손 모양 커서 표시 */
+    transition: background-color 0.2s ease; /* 호버 애니메이션 */
 }
 
 .post-title {
@@ -90,4 +92,15 @@ body {
     font-size: 14px;
     color: #555;
     font-weight: 500;
+}
+
+menu {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
+    background-color: #f1f1f1;
+    cursor: pointer;
 }

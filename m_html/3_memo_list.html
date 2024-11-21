@@ -10,9 +10,14 @@
 </head>
 <body>
     <section class="wrap">
+        <div class="buttons">
+            <button class="menu" id="log_out_btn">로그아웃</button>
+            <button class="menu" id="mod_my_btn">내 정보 수정</button>
+            <button class="menu" id="write_memo">게시물 작성</button>
+        </div>
         <h1 class="name">아무 말 대잔치</h1>
         <h2 class="name">안녕하세요, 아무 말 대잔치 게시판입니다.</h2>
-        <article class="post">
+        <article class="post" data-title="제목1" data-context="내용1" data-username="작성자1">
             <h2 class="post-title">제목1</h2>
             <div class="post-stats">
                 <span class="stat">좋아요: 0</span>
@@ -26,7 +31,7 @@
                 <span class="author-name">더미작성자 1</span>
             </div>
         </article>
-        <article class="post">
+        <article class="post" data-title="제목1" data-context="내용1" data-username="작성자1">
             <h2 class="post-title">제목2</h2>
             <div class="post-stats">
                 <span class="stat">좋아요: 0</span>
@@ -40,7 +45,7 @@
                 <span class="author-name">더미작성자 1</span>
             </div>
         </article>
-        <article class="post">
+        <article class="post" data-title="제목1" data-context="내용1" data-username="작성자1">
             <h2 class="post-title">제목3</h2>
             <div class="post-stats">
                 <span class="stat">좋아요: 0</span>
@@ -56,32 +61,60 @@
         </article>
     </section>
     <script>
+         // 내 정보 보기 변경 버튼 클릭
+         document.getElementById('mod_my_btn').addEventListener('click', () => {
+            window.location.href = '/my_info';
+        });
+
+        document.getElementById('write_memo').addEventListener('click', () => {
+            window.location.href = '/add_memo';
+        });
+
+        // 로그아웃 버튼 클릭
+        document.getElementById('log_out_btn').addEventListener('click', () => {
+            window.location.href = '/login';
+        });
         // 서버에서 메모 데이터를 가져와 HTML에 채워넣는 함수
         async function fetchMemos() {
-            try {
-                // 서버에서 메모 데이터를 가져옵니다.
-                const response = await fetch('/memo_list');
-                const memos = await response.json();
-    
-                // HTML에서 기존의 <article> 요소를 모두 가져옵니다.
-                const articles = document.querySelectorAll('.post');
-    
-                // 최대 3개의 메모 데이터를 기존 HTML에 채웁니다.
-                memos.slice(0, 3).forEach((memo, index) => {
-                    if (articles[index]) {
-                        articles[index].querySelector('.post-title').textContent = memo.title || '제목 없음';
-                        articles[index].querySelector('.time').textContent = memo.time || '0000-00-00 00:00:00';
-                        articles[index].querySelector('.author-name').textContent = memo.username || '익명';
-                    }
-                });
-            } catch (err) {
-                console.error('메모를 가져오는 중 오류 발생:', err);
-            }
+    try {
+        const response = await fetch('/api/memo_list');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
+        const memos = await response.json();
+
+        const articles = document.querySelectorAll('.post');
+
+        memos.slice(0, 3).forEach((memo, index) => {
+            if (articles[index]) {
+                // 제목 설정
+                articles[index].querySelector('.post-title').textContent = memo.title || '제목 없음';
+                articles[index].querySelector('.time').textContent = memo.time || '0000-00-00 00:00:00';
+                articles[index].querySelector('.author-name').textContent = memo.username || '익명';
+                
+                // 클릭 이벤트 추가
+                articles[index].addEventListener('click', () => {
+                    openMemoDetail(memo);
+                });
+            }
+        });
+    } catch (err) {
+        console.error('메모를 가져오는 중 오류 발생:', err);
+    }
+}
+
+// 게시물 상세보기 페이지로 이동하는 함수
+function openMemoDetail(memo) {
+    const detailUrl = `/look_memo?title=${encodeURIComponent(memo.title)}&context=${encodeURIComponent(memo.context)}&username=${encodeURIComponent(memo.username)}&time=${encodeURIComponent(memo.time)}&img=${encodeURIComponent(memo.img)}`;
+    window.location.href = detailUrl;
+}
+
+
     
-        // 호출
+       // 함수 호출
         fetchMemos();
     </script>
     
 </body>
 </html>
+

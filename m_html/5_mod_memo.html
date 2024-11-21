@@ -9,21 +9,123 @@
 <body>
     <section class="wrap">
         <h1 class="name">게시글 수정</h1>
+        <div class="buttons">
+            <button class="menu" id="log_out_btn">로그아웃</button>
+            <button class="menu" id="write_memo">게시물 작성</button>
+            <button class="menu" id="mod_my_btn">내 정보 수정</button>
+            <button class="menu" id="list_memo">게시물 목록</button>
+        </div>
         <article class="payload">
-            <p class="description">제목*</p>
-            <hr class="horizontal-rule"/>
-            <input type="text" name="title">
-            <hr class="horizontal-rule"/>
-            <p class="description">내용*</p>
-            <hr class="horizontal-rule"/>
-            <input type="text" name="context">
-            <hr class="horizontal-rule"/>      
-            <p class="description">이미지</p>
-            <input type="file" name="img">
-        </article>
-        <article class="buttons">
-            <a class="button" href="/4_look_memo.html" target="_blank">수정하기</a>
+            <form id="memo-mod-form" method="POST" enctype="multipart/form-data">
+                <p class="description">제목 (수정 불가)*</p>
+                <hr class="horizontal-rule"/>
+                <input type="text" id="title" name="title" readonly>
+                <hr class="horizontal-rule"/>
+                <p class="description">내용*</p>
+                <hr class="horizontal-rule"/>
+                <input type="text" id="context" name="context" required>
+                <hr class="horizontal-rule"/>      
+                <p class="description">이미지</p>
+                <input type="file" id="memo_img" name="memo_img" accept="image/*">
+                <p class="description">작성시간</p>
+                <input type="datetime-local" id="time" name="time">
+                <p class="description">작성자</p>
+                <input type="text" id="username" name="username">
+                <article class="buttons">
+                    <button class="button" type="submit">수정하기</button>
+                </article>
+            </form>
         </article>
     </section>
+
+    <script>
+        // 내 정보 보기 변경 버튼 클릭
+        document.getElementById('mod_my_btn').addEventListener('click', () => {
+            window.location.href = '/my_info';
+        });
+
+        document.getElementById('write_memo').addEventListener('click', () => {
+            window.location.href = '/add_memo';
+        });
+        document.getElementById('list_memo').addEventListener('click', () => {
+            window.location.href = '/memo_list';
+        });
+
+        // 로그아웃 버튼 클릭
+        document.getElementById('log_out_btn').addEventListener('click', () => {
+            window.location.href = '/login';
+        });
+        // 쿼리 파라미터에서 데이터 가져오기
+        function getQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                title: params.get('title') // 제목 가져오기
+            };
+        }
+
+        // 기존 데이터를 로드하여 폼에 채우기
+        async function loadMemoDetails() {
+            const { title } = getQueryParams();
+            if (!title) {
+                alert('잘못된 접근입니다.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/look_memo?title=${encodeURIComponent(title)}`);
+                if (!response.ok) {
+                    throw new Error('게시물을 불러오는 데 실패했습니다.');
+                }
+                const memo = await response.json();
+
+                // 폼 필드에 데이터 채우기
+                document.getElementById('title').value = memo.title || '';
+                document.getElementById('context').value = memo.context || '';
+                document.getElementById('time').value = memo.time || '';
+                document.getElementById('username').value = memo.username || '';
+            
+            } catch (err) {
+                console.error('데이터 로드 중 오류 발생:', err);
+                alert('게시물을 불러오는 데 실패했습니다.');
+            }
+        }
+
+        // 상세 페이지로 이동
+        function openMemoDetail(memo) {
+            const detailUrl = `/look_memo?title=${encodeURIComponent(memo.title)}&context=${encodeURIComponent(memo.context)}&username=${encodeURIComponent(memo.username)}&time=${encodeURIComponent(memo.time)}`;
+            window.location.href = detailUrl;
+        }
+
+        // 폼 제출 처리
+        document.getElementById('memo-mod-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+            const title = document.getElementById('title').value; // 제목은 읽기 전용
+
+            try {
+                const response = await fetch('/mod_memo', {
+                    method: 'PATCH',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('게시물 수정 실패');
+                }
+
+                const result = await response.json();
+                alert(result.message);
+
+                // 수정 후 상세보기 페이지로 이동
+                openMemoDetail(result.memo);
+            } catch (err) {
+                console.error('수정 요청 중 오류 발생:', err);
+                alert('게시물 수정 중 오류가 발생했습니다. 다시 시도해주세요.');
+            }
+        });
+
+        // 페이지 로드 시 데이터 로드
+        loadMemoDetails();
+    </script>
 </body>
 </html>

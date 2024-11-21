@@ -15,14 +15,24 @@ body {
 
 .wrap {
     width: 100%;
-    max-width: 400px;
-    background-color: #f6f4f7;
+    max-width: 500px;
+    background-color: #E0CFE3;
     padding: 20px;
-    text-align: center;
-    justify-content: center;
-    align-items: center;
+    border-radius: 10px;
+   
 }
 
+menu {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
+    background-color: #f1f1f1;
+    cursor: pointer;
+  }
+  
 /* 헤더 */
 .header {
     display: flex;

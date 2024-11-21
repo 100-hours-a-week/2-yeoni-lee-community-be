@@ -15,11 +15,11 @@ body {
 
 .wrap {
     width: 100%;
-    max-width: 600px;
+    max-width: 500px;
     background-color: #E0CFE3;
     padding: 20px;
     border-radius: 10px;
-    margin-top: 20px;
+   
 }
 
 .name {
@@ -172,4 +172,15 @@ button.edit:hover, button.delete:hover {
     font-size: 14px;
     color: #333;
     margin: 5px 0;
+}
+
+menu {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
+    background-color: #f1f1f1;
+    cursor: pointer;
 }

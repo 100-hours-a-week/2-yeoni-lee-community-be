@@ -14,8 +14,13 @@
         <h1 class="name">작성된 게시글과 댓글은 삭제됩니다.</h1>
         <article class="buttons">
         <a class="cancel" href="7_my_info.html">취소</a>
-        <a class="alright" href="2_login.html">확인</a>
+        <a class="alright" button id="yourElementId" href="2_login.html">확인</a>
         </article>
 	</section>
+    <script>
+        document.getElementById('yourElementId').addEventListener('click', () => {
+          alert('회원 탈퇴 완료!');
+        });
+      </script>
 </body>
 </html>

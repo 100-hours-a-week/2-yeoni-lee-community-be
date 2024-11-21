@@ -14,8 +14,13 @@
         <h1 class="name">삭제된 내용은 복구할 수 없습니다.</h1>
         <article class="buttons">
         <a class="cancel" href="4_look_memo.html">취소</a>
-        <a class="alright" href="4_look_memo.html">확인</a>
+        <a class="alright" button id="yourElementId" href="4_look_memo.html">확인</a>
         </article>
 	</section>
+    <script>
+        document.getElementById('yourElementId').addEventListener('click', () => {
+          alert('댓글이 삭제되었습니다!');
+        });
+      </script>
 </body>
 </html>

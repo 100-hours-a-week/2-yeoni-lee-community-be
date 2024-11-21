@@ -9,8 +9,13 @@
 <body>
     <section class="wrap">
         <h1 class="name">게시글 추가</h1>
+        <div class="buttons">
+            <button class="menu" id="log_out_btn">로그아웃</button>
+            <button class="menu" id="list_memo">게시물 목록</button>
+            <button class="menu" id="mod_my_btn">내 정보 수정</button>
+        </div>
         <article class="payload">
-            <form id="memo-form" method="POST" action="/add_memo">
+            <form id="memo-form" method="POST" action="/add_memo" enctype="multipart/form-data">
                 <p class="description">제목*</p>
                 <hr class="horizontal-rule"/>
                 <input type="text" id="title" name="title" required>
@@ -26,10 +31,26 @@
                 <p class="description">작성자</p>
                 <input type="text" id = "username" name="username">
                 <article class="buttons">
-                    <button class="button" type="submit" href="/3_memo_list.html" class="button">추가하기</button>
+                    <button class="button" type="submit">추가하기</button>
+
                 </article>
             </form>
         </article>
     </section>
+    <script>
+        // 내 정보 보기 변경 버튼 클릭
+        document.getElementById('mod_my_btn').addEventListener('click', () => {
+            window.location.href = '/my_info';
+        });
+
+        document.getElementById('list_memo').addEventListener('click', () => {
+            window.location.href = '/memo_list';
+        });
+
+        // 로그아웃 버튼 클릭
+        document.getElementById('log_out_btn').addEventListener('click', () => {
+            window.location.href = '/login';
+        });
+    </script>
 </body>
 </html>

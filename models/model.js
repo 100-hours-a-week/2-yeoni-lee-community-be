@@ -1,3 +1,5 @@
+//model.js
+
 const fs = require('fs');
 const path = require('path');
 
@@ -37,8 +39,16 @@ const getMemos = () => {
   };
 
   //메모 저장ㅎㅏ기
-const saveMemos = (memo) => {
-    fs.writeFileSync(memoFilePath, JSON.stringify(memo, null, 2), 'utf8');
+  const saveMemos = (memos) => {
+    const fs = require('fs');
+    const memoFilePath = path.join(__dirname, '../memo.json'); // 경로 확인
+  
+    try {
+      fs.writeFileSync(memoFilePath, JSON.stringify(memos, null, 2), 'utf8');
+    } catch (err) {
+      console.error('파일 저장 중 에러 발생:', err); // 디버깅용 로그 추가
+      throw err; // 에러 다시 던짐
+    }
   };
   
 
