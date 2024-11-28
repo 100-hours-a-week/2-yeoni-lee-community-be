@@ -8,14 +8,12 @@ const addMemo = (req, res) => {
   const file = req.file;
   const memos = getMemos(); // 기존 메모 데이터 가져오기
 
-  // ID 생성: 배열 길이 기반 또는 현재 시간을 고유 ID로 사용
-  
   const memoData = {
     title: req.body.title,
     context: req.body.context,
-    time: req.body.time,
+    time: req.body.time || new Date().toISOString(), // 현재 시간 디폴트 설정
     username: req.body.username,
-    img: file ? '/uploads/${file.filename}' : null, // 업로드된 이미지 파일 경로
+    img: file ? `/uploads/${file.filename}` : null, // 업로드된 이미지 파일 경로
   };
 
   memos.push(memoData); // 새 메모 추가
@@ -41,12 +39,8 @@ const getMemoList = (req, res) => {
 };
 
 
-
-
-//메모 수정하기 
 const updateMemo = (req, res) => {
-  const { title, context, time, username } = req.body; // 요청 데이터에서 필드 추출
-  const file = req.file; // 업로드된 파일
+  const { title, context, time, username, comment, deleteCommentIndex } = req.body; // 요청 데이터에서 필드 추출
   const memos = getMemos(); // 기존 메모 데이터 로드
 
   // 제목으로 메모 찾기
@@ -55,13 +49,31 @@ const updateMemo = (req, res) => {
     return res.status(404).json({ error: '수정하려는 게시물을 찾을 수 없습니다.' });
   }
 
+  // 댓글 추가
+  if (comment) {
+    if (!memos[memoIndex].comments) {
+        memos[memoIndex].comments = [];
+    }
+    memos[memoIndex].comments.push({ username: '익명', text: comment });
+  }
+
+  // 댓글 삭제 (필요 시)
+  if (deleteCommentIndex !== undefined) {
+    const index = parseInt(deleteCommentIndex, 10);
+    if (index >= 0 && index < memos[memoIndex].comments.length) {
+        memos[memoIndex].comments.splice(index, 1);
+    } else {
+        return res.status(400).json({ error: '잘못된 댓글 인덱스입니다.' });
+    }
+  }
+
   // 기존 메모 데이터 수정
   const updatedMemo = {
     ...memos[memoIndex], // 기존 데이터 유지
     context: context || memos[memoIndex].context, // 내용 수정
     time: time || memos[memoIndex].time, // 시간 수정
     username: username || memos[memoIndex].username, // 작성자 수정
-    img: file ? file.filename : memos[memoIndex].img, // 이미지 수정
+    img: req.file ? req.file.filename : memos[memoIndex].img, // 이미지 수정
   };
 
   // 수정된 메모를 기존 배열에 반영
@@ -70,11 +82,12 @@ const updateMemo = (req, res) => {
   // 수정된 데이터 저장
   try {
     saveMemos(memos);
-    res.status(200).json({ message: '게시물이 성공적으로 수정되었습니다.', memo: updatedMemo });
+    res.status(200).json(memos[memoIndex]); // 수정된 메모 반환
   } catch (err) {
     res.status(500).json({ error: '게시물을 수정하는 데 실패했습니다.' });
   }
 };
+
 
 
 

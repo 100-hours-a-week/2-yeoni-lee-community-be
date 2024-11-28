@@ -95,6 +95,8 @@ router.get('/api/look_memo', (req, res) => {
 router.get('/look_memo', (req, res) => {
   res.sendFile(path.join(__dirname, '../m_html', '4_look_memo.html'));
 });
+// 게시물 상세보기 및 댓글 추가/삭제 처리
+router.patch('/api/look_memo', updateMemo);
 
 
 

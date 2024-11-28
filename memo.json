@@ -1,69 +1,36 @@
 [
   {
-    "title": "AllI",
-    "context": "I don't want a",
-    "time": "",
-    "username": "test",
-    "img": null
+    "title": "이거정말",
+    "context": "멋진데요 ? - 수정됨 -또 수정됨 - Eh",
+    "time": "2024-11-25T05:46:13.430Z",
+    "username": "큐더블유이알",
+    "img": "/uploads/234d1f4419bec21fcbb30bce357b7f3e",
+    "comments": [
+      {
+        "username": "익명",
+        "text": "asdf"
+      },
+      {
+        "username": "익명",
+        "text": "선구리 쓴 쿠로미와 마멜이"
+      }
+    ]
   },
   {
-    "id": null,
-    "title": "이것은 테스트 게시물",
-    "context": "테스트 입니다.",
-    "time": "",
-    "username": "",
-    "img": null
-  },
-  {
-    "id": 1,
-    "title": "이미지 업로드 테스트중",
-    "context": "얍삐 ",
-    "time": "",
-    "username": "ㅁㄴㅇㄹ",
-    "img": null
-  },
-  {
-    "id": 2,
-    "title": "ㄴ",
-    "context": "ㄴ",
-    "time": "",
-    "username": "",
-    "img": null
-  },
-  {
-    "id": 3,
-    "title": "d",
-    "context": "d",
-    "time": "",
-    "username": "d",
-    "img": null
-  },
-  {
-    "title": "asdf",
-    "context": "asdf",
-    "time": "",
-    "username": "asdf",
-    "img": "e67795caf331fc1b76cf91919c5733de"
-  },
-  {
-    "title": "ewer",
-    "context": "qwer",
-    "time": "",
-    "username": "qwer",
-    "img": "/uploads/6b04fac4a03e41db56092c9e839403b4"
-  },
-  {
-    "title": "ㅁㄴㄹㅂㅈㄷㄹ",
-    "context": "ㅁㄴㅇㄹ",
-    "time": "",
-    "username": "ㅁㄴㅇㄹ",
-    "img": "/uploads/02cdea9b71d242f22582296ccce4ac9a"
-  },
-  {
-    "title": "test",
-    "context": "testtest",
-    "time": "",
-    "username": "",
-    "img": "/uploads/99b9a2d331486123a1b74a04e6dd9286"
+    "title": "안녕하세요, 오늘은 11월 26일 입니다.",
+    "context": "즐거운 화요일! 내일은 졸업 발표가 있어서 조금 바쁘네요. 다들 화이팅 하시길 바랍니다.",
+    "time": "2024-11-26T05:00:09.823Z",
+    "username": "이주연",
+    "img": "/uploads/5344cf12f6238d24a3ccec01cfe0c7ab",
+    "comments": [
+      {
+        "username": "익명",
+        "text": "짤이랑 내용이랑 안맞는데요?"
+      },
+      {
+        "username": "익명",
+        "text": "화이팅 입니다!"
+      }
+    ]
   }
 ]

@@ -59,3 +59,16 @@ menu {
     align-items: center;
     background-color: #EEE9EF; /* 배경색 */
   }
+
+
+input[type="text"],
+input[type="datetime-local"],
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  resize: vertical; /* 내용이 길어지면 크기 조절 가능하게 */
+  overflow: auto; /* 내용이 넘칠 때 스크롤 가능 */
+}

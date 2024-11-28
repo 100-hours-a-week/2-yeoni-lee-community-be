@@ -16,80 +16,197 @@
         </div>
         <h1 class="name">아무 말 대잔치</h1>
         <article class="post">
-            <h2 class="post-title">제목 로딩 중...</h2>
+            <h2 class="post-title">title</h2>
             <div class="post-info">
-                <span class="username">작성자 로딩 중...</span>
-                <span class="time">시간 로딩 중...</span>
+                <span class="username">username</span>
+                <span class="time">time</span>
                 <div class="action-buttons">
                     <!-- 수정 버튼 -->
-                    <a class="edit" href="#">수정</a>
+                    <a class="edit" id="mod_memo" href="#">수정</a>
                     <!-- 삭제 버튼 -->
                     <button class="delete" id="delete-btn">삭제</button>
                 </div>
             </div>
             <hr class="horizontal-rule" />
             <!-- 이미지 추가 -->
-            <img id="memo-img" src="" alt="게시물 이미지" style="max-width: 100%; display: none; margin: 20px 0;">
-            <p class="context">내용 로딩 중...</p>
+            <div class="image-container">
+                <img id="memo-img" src="" alt="게시물 이미지">
+            </div>
+            <p class="context">context</p>
         </article>
-        <article class="comment-input">
-            <input type="text" id="comment" name="comment" required>
+        <article class="write_comment">
+            <input type="text" id="comment-text"></textarea>
+            <button id="submit-comment">댓글 작성</button>
         </article>
-        <input type="text" id="title" name="title" required>
+        <article class="comment_box" id="comment-box">
+            <!-- 댓글들이 여기 추가될 것입니다 -->
+        </article>
         
     </section>
-
     <script>
-        // 페이지 이동 버튼 설정
+        // 내 정보 보기 변경 버튼 클릭
         document.getElementById('mod_my_btn').addEventListener('click', () => {
             window.location.href = '/my_info';
+        });
+
+        // 목록 버튼 클릭
+        document.getElementById('list_memo').addEventListener('click', () => {
+            window.location.href = '/memo_list';
         });
 
         document.getElementById('write_memo').addEventListener('click', () => {
             window.location.href = '/add_memo';
         });
 
-        document.getElementById('list_memo').addEventListener('click', () => {
-            window.location.href = '/memo_list';
-        });
-
+        // 로그아웃 버튼 클릭
         document.getElementById('log_out_btn').addEventListener('click', () => {
             window.location.href = '/login';
         });
 
-        // 쿼리 파라미터에서 데이터 가져오기
+        document.querySelectorAll('.edit').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const title = button.closest('.post').querySelector('.post-title').textContent;
+                window.location.href = `/mod_memo?title=${encodeURIComponent(title)}`;
+            });
+        });
+
+        document.getElementById('submit-comment').addEventListener('click', async () => {
+            const commentText = document.getElementById('comment-text').value.trim();
+            
+            if (!commentText) {
+                alert('댓글을 입력해주세요.');
+                return;
+            }
+
+            const memoTitle = getQueryParams().title; // 현재 게시물 제목을 가져옴
+
+            try {
+                const response = await fetch('/api/look_memo', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ title: memoTitle, comment: commentText }),
+                });
+
+                    if (response.ok) {
+                    const updatedMemo = await response.json();
+                    renderComments(updatedMemo.comments);
+                    document.getElementById('comment-text').value = ''; // 입력 필드 비우기
+                } else {
+                    const errorData = await response.json();
+                    alert(`오류 발생: ${errorData.error}`);
+                }
+            } catch (err) {
+                console.error('댓글 작성 중 오류 발생:', err);
+                alert('댓글 작성 중 오류가 발생했습니다.');
+            }
+        });
+
+         // 삭제 버튼 클릭
+        document.querySelectorAll('.delete').forEach(button => {
+            button.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const title = button.closest('.post').querySelector('.post-title').textContent;
+                
+                if (confirm('정말 삭제하시겠습니까?')) {
+                    try {
+                        const response = await fetch('/delete_memo', {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ title }),
+                        });
+
+                        if (response.ok) {
+                            alert('게시물이 삭제되었습니다.');
+                            window.location.href = `/memo_list`
+                        } else {
+                            const errorData = await response.json();
+                            alert(`오류 발생: ${errorData.error}`);
+                        }
+                    } catch (err) {
+                        console.error('삭제 요청 중 오류 발생:', err);
+                        alert('삭제 요청 중 오류가 발생했습니다.');
+                    }
+                }
+            });
+        });
+
+       
+
+        // URL의 쿼리 파라미터에서 데이터를 추출하는 함수
         function getQueryParams() {
             const params = new URLSearchParams(window.location.search);
             return {
-                title: params.get('title') || '제목 없음',
-                context: params.get('context') || '내용 없음',
-                username: params.get('username') || '익명',
-                time: params.get('time') || '알 수 없음',
-                img: params.get('img') || '', // 이미지 파일명 추가
+                title: params.get('title'),
+                context: params.get('context'),
+                username: params.get('username'),
+                time: params.get('time'),
+                img: params.get('img')
             };
         }
-
-        // 상세 정보 출력
-        function displayMemoDetails() {
-            const { title, context, username, time, img } = getQueryParams();
-
-            document.querySelector('.post-title').textContent = title;
-            document.querySelector('.context').textContent = context;
-            document.querySelector('.username').textContent = username;
-            document.querySelector('.time').textContent = time;
-
-            // 이미지 표시
-            const memoImg = document.getElementById('memo-img');
-            if (img && img !== 'null') {
-                memoImg.src = img; // JSON에 저장된 경로를 src에 할당
-                memoImg.style.display = 'block'; // 이미지 보이기
-            } else {
-                memoImg.style.display = 'none'; // 이미지가 없으면 숨기기
+    
+        // 데이터를 HTML 요소에 바인딩하는 함수
+        function renderMemoDetail() {
+            const memo = getQueryParams();
+    
+            // 제목 설정
+            document.querySelector('.post-title').textContent = memo.title || '제목 없음';
+    
+            // 작성자 설정
+            document.querySelector('.username').textContent = memo.username || '익명';
+    
+            // 작성 시간 설정
+            document.querySelector('.time').textContent = memo.time || '0000-00-00 00:00:00';
+    
+            // 게시물 내용 설정
+            document.querySelector('.context').textContent = memo.context || '내용 없음';
+    
+            // 이미지 설정 (이미지가 있을 경우에만)
+            if (memo.img) {
+                document.querySelector('#memo-img').src = memo.img;
             }
+
+            fetchComments(memo.title);
         }
 
-        // 호출
-        displayMemoDetails();
+        async function fetchComments(title) {
+            try {
+                const response = await fetch(`/api/look_memo?title=${encodeURIComponent(title)}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const memo = await response.json();
+                renderComments(memo.comments || []);
+            } catch (err) {
+                console.error('댓글을 가져오는 중 오류 발생:', err);
+        }
+    }
+    // 댓글을 렌더링하는 함수
+    function renderComments(comments) {
+        const commentBox = document.getElementById('comment-box');
+        commentBox.innerHTML = ''; // 기존 댓글 제거
+
+        comments.forEach(comment => {
+            addCommentToDOM(comment);
+        });
+    }
+
+    function addCommentToDOM(comment) {
+        const commentBox = document.getElementById('comment-box');
+        const commentElement = document.createElement('div');
+        commentElement.classList.add('comment');
+        commentElement.innerHTML = `
+            <p>${comment.username || '익명'}: ${comment.text}</p>`;
+        commentBox.appendChild(commentElement);
+    }
+        
+        // 페이지 로드 시 데이터 바인딩
+        document.addEventListener('DOMContentLoaded', renderMemoDetail);
     </script>
+    
 </body>
 </html>

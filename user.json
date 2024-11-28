@@ -2,8 +2,8 @@
   {
     "email": "ju010320@naver.com",
     "password": "1234",
-    "nickname": "neon",
-    "img": "aed97ffedb3fd9730c7909f45e4bd030"
+    "nickname": "yeon",
+    "img": "620007bcc131dd0719badf6647c78b9a"
   },
   {
     "email": "ju010320@gmail.com",
@@ -12,6 +12,12 @@
     "img": null
   },
   {
+    "img": null
+  },
+  {
+    "email": "a@gmail.com",
+    "password": "5678",
+    "nickname": "juyeon",
     "img": null
   }
 ]

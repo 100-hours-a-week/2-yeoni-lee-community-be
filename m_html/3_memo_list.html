@@ -103,18 +103,15 @@
     }
 }
 
-// 게시물 상세보기 페이지로 이동하는 함수
-function openMemoDetail(memo) {
-    const detailUrl = `/look_memo?title=${encodeURIComponent(memo.title)}&context=${encodeURIComponent(memo.context)}&username=${encodeURIComponent(memo.username)}&time=${encodeURIComponent(memo.time)}&img=${encodeURIComponent(memo.img)}`;
-    window.location.href = detailUrl;
-}
-
-
-    
-       // 함수 호출
+    // 게시물 상세보기 페이지로 이동하는 함수
+    function openMemoDetail(memo) {
+        const detailUrl = `/look_memo?title=${encodeURIComponent(memo.title)}&context=${encodeURIComponent(memo.context)}&username=${encodeURIComponent(memo.username)}&time=${encodeURIComponent(memo.time)}&img=${encodeURIComponent(memo.img)}`;
+        window.location.href = detailUrl;
+    }   
+        // 함수 호출
         fetchMemos();
-    </script>
-    
-</body>
-</html>
+        </script>
+        
+    </body>
+    </html>
 

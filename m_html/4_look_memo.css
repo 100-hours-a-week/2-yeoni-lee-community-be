@@ -147,32 +147,77 @@ button.edit:hover, button.delete:hover {
     background-color: #7a60b4;
 }
 
-/* 댓글 내용 */
-.comment {
+/* 댓글 박스 */
+.comment_box {
+    margin-top: 20px;
     padding: 10px;
-    background-color: #E0CFE3;
+    background-color: #F0E4F7; /* 전체 테마와 맞는 부드러운 보라색 계열 */
     border-radius: 10px;
-    margin-bottom: 15px;
 }
 
-.comment .author {
+/* 댓글 내용 */
+.comment {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 15px;
+    margin-bottom: 10px;
+    background-color: #FFFFFF; /* 댓글 박스 안에서 댓글을 강조하기 위한 흰색 배경 */
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 약간의 그림자로 부드러운 효과 */
+}
+
+.comment .comment-author {
     font-size: 14px;
-    flex-direction: row;
-    font-weight: 500;
+    font-weight: 600;
     color: #555;
 }
 
-.comment .time {
-    color: #999;
-    font-size: 12px;
-    margin-left: auto;
-}
-
-.comment-content {
+.comment .comment-text {
     font-size: 14px;
     color: #333;
-    margin: 5px 0;
 }
+
+.comment .comment-time {
+    font-size: 12px;
+    color: #999;
+    text-align: right;
+}
+
+/* 댓글 작성 섹션 */
+.write_comment {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.write_comment textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    resize: vertical; /* 세로로 크기 조절 가능 */
+}
+
+.write_comment button {
+    align-self: flex-end;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    background-color: #9575cd;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.write_comment button:hover {
+    background-color: #7a60b4;
+}
+
 
 menu {
     padding: 5px 10px;
@@ -183,4 +228,21 @@ menu {
     color: #333;
     background-color: #f1f1f1;
     cursor: pointer;
+}
+
+.image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f1f1f1;
+    border-radius: 10px;
+    width: 100%;
+    height: auto;
+    min-height: 200px; /* 최소 높이 설정 */
+    overflow: hidden;
+}
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    object-fit: cover; /* 이미지를 컨테이너에 맞게 자르기 */
 }

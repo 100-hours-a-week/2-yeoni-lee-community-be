@@ -23,7 +23,7 @@
                 <hr class="horizontal-rule"/>
                 <p class="description">내용*</p>
                 <hr class="horizontal-rule"/>
-                <input type="text" id="context" name="context" required>
+                <textarea id="context" name="context" rows="10" required></textarea>
                 <hr class="horizontal-rule"/>      
                 <p class="description">이미지</p>
                 <input type="file" id="memo_img" name="memo_img" accept="image/*">
@@ -37,7 +37,6 @@
             </form>
         </article>
     </section>
-
     <script>
         // 내 정보 보기 변경 버튼 클릭
         document.getElementById('mod_my_btn').addEventListener('click', () => {
@@ -92,7 +91,7 @@
 
         // 상세 페이지로 이동
         function openMemoDetail(memo) {
-            const detailUrl = `/look_memo?title=${encodeURIComponent(memo.title)}&context=${encodeURIComponent(memo.context)}&username=${encodeURIComponent(memo.username)}&time=${encodeURIComponent(memo.time)}`;
+            const detailUrl = `/look_memo?title=${encodeURIComponent(memo.title)}&context=${encodeURIComponent(memo.context)}&username=${encodeURIComponent(memo.username)}&time=${encodeURIComponent(memo.time)}&img=${encodeURIComponent(memo.img)}`;
             window.location.href = detailUrl;
         }
 
