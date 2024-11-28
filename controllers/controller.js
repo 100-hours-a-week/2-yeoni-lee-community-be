@@ -57,16 +57,6 @@ const updateMemo = (req, res) => {
     memos[memoIndex].comments.push({ username: '익명', text: comment });
   }
 
-  // 댓글 삭제 (필요 시)
-  if (deleteCommentIndex !== undefined) {
-    const index = parseInt(deleteCommentIndex, 10);
-    if (index >= 0 && index < memos[memoIndex].comments.length) {
-        memos[memoIndex].comments.splice(index, 1);
-    } else {
-        return res.status(400).json({ error: '잘못된 댓글 인덱스입니다.' });
-    }
-  }
-
   // 기존 메모 데이터 수정
   const updatedMemo = {
     ...memos[memoIndex], // 기존 데이터 유지
