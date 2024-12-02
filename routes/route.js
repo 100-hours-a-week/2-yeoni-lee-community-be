@@ -1,15 +1,19 @@
 //route.js
-
+/////es6///////
+import {addMemo, getMemoList, updateMemo,} from '../controllers/controller'
+import {registerUser, loginUser, updatePw, look_my_info} from '../controllers/controller2'
+import {getMemos, saveMemos} from '../models/model'
+////커먼제이에스////
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
-const { addMemo, getMemoList, updateMemo,} = require('../controllers/controller');
-const { registerUser, loginUser, updatePw, look_my_info } = require('../controllers/controller2');
-const { getMemos, saveMemos } = require('../models/model');
+//const { addMemo, getMemoList, updateMemo,} = require('../controllers/controller');
+//const { registerUser, loginUser, updatePw, look_my_info } = require('../controllers/controller2');
+//const { getMemos, saveMemos } = require('../models/model');
 
 const router = express.Router();
 const upload = multer({ dest: path.join(__dirname, '../uploads') }); // 업로드 설정
-
+////////////////
 ////////////2.로그인////////////
 // 로그인 페이지 서빙
 router.get('/login', (req, res) => {

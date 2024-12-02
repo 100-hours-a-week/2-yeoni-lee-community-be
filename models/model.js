@@ -32,7 +32,7 @@ const getMemos = () => {
       return JSON.parse(data || '[]'); // 데이터가 없으면 빈 배열 반환
     } catch (err) {
       if (err.code === 'ENOENT') {
-        return []; // 파일이 없으면 빈 배열 반환
+        return []; 
       }
       throw err; // 다른 오류는 다시 던짐
     }
@@ -51,10 +51,12 @@ const getMemos = () => {
     }
   };
   
-
+/*
 module.exports = {
-  getUsers, //회원정보 가져오기
-  saveUsers, //회원정보 저장하기
-  getMemos,//게시물 정보 불러오기
-  saveMemos,//게시물 저장하기
-};
+  getUsers, 
+  saveUsers, 
+  getMemos,
+  saveMemos,
+};*/
+
+export {getUsers, saveUsers, getMemos, saveMemos,};

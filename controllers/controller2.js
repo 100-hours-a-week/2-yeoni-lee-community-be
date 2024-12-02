@@ -1,6 +1,6 @@
 //controller2.js
-
-const { getUsers, saveUsers, } = require('../models/model');
+import {getUsers, saveUsers,} from '../models/model'
+//const { getUsers, saveUsers, } = require('../models/model');
 
 
 const registerUser = (req, res) => {
@@ -13,18 +13,13 @@ const registerUser = (req, res) => {
       nickname: req.body.nickname,
       img: file ? file.filename : null, 
     };
-  
-    // 기존 사용자 데이터 가져오기
+
     const users = getUsers();
-  
-    // 새 사용자 추가
     users.push(userData);
-  
-    // 사용자 데이터 저장
+
     try {
       saveUsers(users);
   
-      // 회원가입 완료 후 성공 페이지로 이동
       res.redirect('/successful_signup');
     } catch (err) {
       res.status(500).json({ error: '회원 데이터를 저장하는 데 실패했습니다.' });
@@ -83,7 +78,7 @@ const my_info = (req, res) => {
       return res.status(200).json(my_informations);
     } else {
       // 사용자 없음
-      return res.status(404).send("내 정보를 찾을 수 없습니다.");
+      return res.status(404).send(`내 정보를 찾을 수 없습니다.`);
     }
   };
   
@@ -151,11 +146,13 @@ const look_my_info = (req, res) => {
 
 
 // 두 함수 내보내기
+/*
 module.exports = {
     registerUser,
     loginUser,
     my_info,
     updatePw,
     look_my_info,
-  };
+  };*/
   
+  export {registerUser, loginUser, my_info, updatePw, look_my_info,};

@@ -1,6 +1,6 @@
 //controller.js
-
-const { getMemos, saveMemos, } = require('../models/model');
+import {getMemos, saveMemos,} from '../models/model'
+//const { getMemos, saveMemos, } = require('../models/model');
 //
 
 //메모 추가하기
@@ -49,7 +49,7 @@ const updateMemo = (req, res) => {
     return res.status(404).json({ error: '수정하려는 게시물을 찾을 수 없습니다.' });
   }
 
-  // 댓글 추가
+  // 댓글
   if (comment) {
     if (!memos[memoIndex].comments) {
         memos[memoIndex].comments = [];
@@ -84,8 +84,11 @@ const updateMemo = (req, res) => {
 
 
 // 두 함수 내보내기
+/*
 module.exports = {
   addMemo,
   getMemoList,
   updateMemo,
-};
+};*/
+
+export {addMemo,getMemoList, updateMemo,};
