@@ -1,10 +1,11 @@
 //model.js
 import fs from 'fs';
 import path from 'path';
-/*
-const fs = require('fs');
-const path = require('path');
-*/
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // JSON 파일 경로
 const dataFilePath = path.join(__dirname, '../user.json');
 const memoFilePath = path.join(__dirname, '../memo.json');
@@ -52,13 +53,5 @@ const getMemos = () => {
       throw err; // 에러 다시 던짐
     }
   };
-  
-/*
-module.exports = {
-  getUsers, 
-  saveUsers, 
-  getMemos,
-  saveMemos,
-};*/
 
 export {getUsers, saveUsers, getMemos, saveMemos,};

@@ -1,11 +1,8 @@
 //controller2.js
-import {getUsers, saveUsers,} from '../models/model'
-//const { getUsers, saveUsers, } = require('../models/model');
+import {getUsers, saveUsers,} from '../models/model.js'
 
 const registerUser = (req, res) => {
     const file = req.file;
-  
-    // 요청 데이터에서 회원 정보 추출
     const userData = {
       email: req.body.email,
       password: req.body.password,
@@ -27,31 +24,22 @@ const registerUser = (req, res) => {
   
   // 로그인 처리
   const loginUser = (req, res) => {
-    // 요청 데이터에서 회원 정보 추출
     const userData = {
       email: req.body.email,
       password: req.body.password,
     };
     const users = getUsers();
-  
-    // 이메일과 비밀번호 확인
     const user = users.find(
       (u) => u.email === userData.email 
       && u.password === userData.password
       );
   
     if (user) {
-      // 로그인 성공 -> 메모 리스트로 리다이렉트
       res.redirect('/memo_list');
     } else {
-      // 로그인 실패 -> 에러 메시지 반환
       res.status(401).send('이메일 또는 비밀번호가 잘못되었습니다.');
     }
   };
-
-
-
-////내 정보 보기////
 
 
 const my_info = (req, res) => {
@@ -63,8 +51,6 @@ const my_info = (req, res) => {
     }
   
     const users = getUsers();
-  
-    // 이메일로 사용자 검색
     const user = users.find((u) => u.email === email);
   
     if (user) {
@@ -81,25 +67,18 @@ const my_info = (req, res) => {
     }
   };
   
-  
-  //요청 데이터에서 이메일, 닉네임, 프로필 사진 추출
   const updatePw = (req, res) => {
-    const { email, password } = req.body; // 이메일과 새 비밀번호 추출
+    const { email, password } = req.body; 
   
-    const users = getUsers(); // 기존 사용자 데이터 로드
-  
-    // 이메일로 사용자 찾기
+    const users = getUsers(); 
     const userIndex = users.findIndex((user) => user.email === email);
     if (userIndex === -1) {
         return res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
     }
-  
-    // 비밀번호 업데이트
     users[userIndex].password = password;
   
-    // 수정된 데이터 저장
     try {
-        saveUsers(users); // 전체 사용자 데이터 저장
+        saveUsers(users); 
         res.status(200).json({ message: '비밀번호가 성공적으로 수정되었습니다.' });
     } catch (err) {
         console.error('비밀번호 수정 중 오류 발생:', err);
@@ -109,11 +88,10 @@ const my_info = (req, res) => {
   
 
 const look_my_info = (req, res) => {
-    const { email, nickname } = req.body; // 요청 데이터에서 필드 추출
-    const file = req.file; // 업로드된 파일
-    const users = getUsers(); // 기존 사용자 데이터 로드
-  
-    // 이메일로 사용자 찾기
+    const { email, nickname } = req.body; 
+    const file = req.file;
+    const users = getUsers(); 
+
     const userIndex = users.findIndex((user) => user.email === email);
     if (userIndex === -1) {
       return res.status(404).json({ error: '존재하지 않는 이메일입니다.' });

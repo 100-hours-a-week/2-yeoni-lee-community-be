@@ -1,5 +1,5 @@
 //controller.js
-import {getMemos, saveMemos,} from '../models/model'
+import {getMemos, saveMemos,} from '../models/model.js'
 //const { getMemos, saveMemos, } = require('../models/model');
 //
 

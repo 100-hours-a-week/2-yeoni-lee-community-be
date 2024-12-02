@@ -1,16 +1,16 @@
 //route.js
 /////es6///////
-import {addMemo, getMemoList, updateMemo,} from '../controllers/controller'
-import {registerUser, loginUser, updatePw, look_my_info} from '../controllers/controller2'
-import {getMemos, saveMemos} from '../models/model'
-////커먼제이에스////
-const express = require('express');
-const multer = require('multer');
-const path = require('path');
-//const { addMemo, getMemoList, updateMemo,} = require('../controllers/controller');
-//const { registerUser, loginUser, updatePw, look_my_info } = require('../controllers/controller2');
-//const { getMemos, saveMemos } = require('../models/model');
+import express from 'express';
+import multer from 'multer';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
+import {addMemo, getMemoList, updateMemo,} from '../controllers/controller.js'
+import {registerUser, loginUser, updatePw, look_my_info} from '../controllers/controller2.js'
+import {getMemos, saveMemos} from '../models/model.js'
+////커먼제이에스////
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const router = express.Router();
 const upload = multer({ dest: path.join(__dirname, '../uploads') }); // 업로드 설정
 ////////////////
@@ -159,4 +159,5 @@ router.delete('/delete_memo', (req, res) => {
 
 
 
-module.exports = router;
+//module.exports = router;
+export default router;
