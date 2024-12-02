@@ -1,8 +1,10 @@
 //model.js
-
+import fs from 'fs';
+import path from 'path';
+/*
 const fs = require('fs');
 const path = require('path');
-
+*/
 // JSON 파일 경로
 const dataFilePath = path.join(__dirname, '../user.json');
 const memoFilePath = path.join(__dirname, '../memo.json');

@@ -2,7 +2,6 @@
 import {getUsers, saveUsers,} from '../models/model'
 //const { getUsers, saveUsers, } = require('../models/model');
 
-
 const registerUser = (req, res) => {
     const file = req.file;
   
@@ -154,5 +153,5 @@ module.exports = {
     updatePw,
     look_my_info,
   };*/
-  
+
   export {registerUser, loginUser, my_info, updatePw, look_my_info,};

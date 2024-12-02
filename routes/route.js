@@ -19,8 +19,6 @@ const upload = multer({ dest: path.join(__dirname, '../uploads') }); // 업로�
 router.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, '../m_html', '2_login.html'));
 });
-
-// 로그인 데이터 처리
 router.post('/login', loginUser);
 
 
@@ -30,11 +28,7 @@ router.post('/login', loginUser);
 router.get('/signup', (req, res) => {
   res.sendFile(path.join(__dirname, '../m_html', '1_signup.html'));
 });
-
-// 회원가입 데이터 처리
 router.post('/signup', upload.single('img'), registerUser);
-
-// 회원가입 성공 페이지 서빙
 router.get('/successful_signup', (req, res) => {
   res.sendFile(path.join(__dirname, '../m_html', 'successful_signup.html'));
 });
@@ -50,8 +44,6 @@ router.get('/successful_signup', (req, res) => {
 router.get('/add_memo', (req, res) => {
   res.sendFile(path.join(__dirname, '../m_html', '6_add_memo.html'));
 });
-
-// 게시물 데이터 처리
 router.post('/add_memo', upload.single('memo_img'), addMemo);
 
 
@@ -66,8 +58,6 @@ router.post('/add_memo', upload.single('memo_img'), addMemo);
 router.get('/memo_list', (req, res) => {
   res.sendFile(path.join(__dirname, '../m_html', '3_memo_list.html'));
 });
-
-// 게시물 목록 데이터 API (JSON 반환)
 router.get('/api/memo_list', getMemoList);
 
 
@@ -94,12 +84,9 @@ router.get('/api/look_memo', (req, res) => {
       res.status(404).json({ error: '게시물을 찾을 수 없습니다.' }); // 에러 반환
   }
 });
-
-// 게시물 상세보기 페이지 서빙
 router.get('/look_memo', (req, res) => {
   res.sendFile(path.join(__dirname, '../m_html', '4_look_memo.html'));
 });
-// 게시물 상세보기 및 댓글 추가/삭제 처리
 router.patch('/api/look_memo', updateMemo);
 
 
@@ -114,10 +101,6 @@ router.get('/mod_memo', (req, res) => {
 });
 // 게시물 수정 데이터 처리
 router.patch('/mod_memo', upload.single('img'), updateMemo);
-
-
-
-
 
 //////////7. 내 정보 보기////////
 //페이지 서빙
