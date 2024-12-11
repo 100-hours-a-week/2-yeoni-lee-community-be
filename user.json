@@ -19,5 +19,11 @@
     "password": "5678",
     "nickname": "juyeon",
     "img": null
+  },
+  {
+    "email": "b@naver.com",
+    "password": "1233",
+    "nickname": "칠색조",
+    "img": null
   }
 ]

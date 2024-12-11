@@ -19,126 +19,112 @@ body {
     background-color: #E0CFE3;
     padding: 20px;
     border-radius: 10px;
-   
 }
 
-menu {
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #333;
-    background-color: #f1f1f1;
-    cursor: pointer;
-  }
-  
-/* 헤더 */
 .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+    text-align: center;
+    margin-bottom: 30px;
 }
 
 .title {
     font-size: 24px;
     font-weight: 700;
+    margin-bottom: 20px;
     color: #333;
 }
 
-/* 드롭다운 메뉴 */
-.dropdown {
-    position: relative;
-    display: inline-block;
+/* 메뉴 버튼 가로 정렬 */
+.menu-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
 }
 
-.dropbtn {
-    background-color: #f6f4f7;
-    color: #666;
+.menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 15px;
     font-size: 14px;
+    font-weight: bold;
     border: none;
+    border-radius: 5px;
+    background-color: #f1f1f1;
     cursor: pointer;
-    font-weight: 500;
-    text-align: center;
+    width: 100px;
+    height: 60px;
 }
 
-.dropdown-content {
-    display: none;
-    position: absolute;
-    right: 0;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
-    z-index: 1;
+.menu span {
+    font-size: 12px;
+    margin-top: 5px;
+    color: #666;
 }
 
-.dropdown-content a {
-    color: #333;
-    padding: 10px 20px;
-    text-decoration: none;
-    display: block;
-    font-size: 14px;
-}
-
-.dropdown-content a:hover {
+.menu:hover {
     background-color: #ddd;
 }
 
-.dropdown:hover .dropdown-content {
-    display: block;
-}
-
-/* 프로필 */
+/* 프로필 정보 */
 .profile {
-  text-align: left; /* 왼쪽 정렬로 변경 */
-  margin-bottom: 30px;
+    text-align: center;
+    margin-bottom: 30px;
 }
-
 
 .description {
-  font-size: 14px;
-  color: #555;
-  margin: 10px 0;
-  text-align: left; /* 왼쪽 정렬 */
+    font-size: 14px;
+    color: #555;
+    margin: 10px 0;
 }
 
-
 .profile-pic {
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
-    background-color: #e0dde3;
+    background-color: #f0f0f0;
+    background-size: cover;
+    background-position: center;
+    border: 2px solid #ccc;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0 auto 20px;
+    position: relative;
+    cursor: pointer;
+    margin: 0 auto;
 }
 
-.plus-icon {
+.profile-pic::after {
+    content: '+';
     font-size: 36px;
     color: #888;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0.8;
 }
 
-.email {
-    font-size: 16px;
-    color: #333;
+.email, .nickname {
+    width: 100%;
+    text-align: center;
     margin-bottom: 20px;
 }
 
-.nickname {
-    width: 100%;
+.nickname input {
+    width: 90%;
     padding: 10px;
     font-size: 14px;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
 
-/* 버튼 */
+/* 버튼 영역 */
 .buttons {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    align-items: center;
 }
 
 .button {
@@ -150,29 +136,19 @@ menu {
     text-decoration: none;
     border-radius: 8px;
     font-weight: 600;
-}
-
-.button.edit {
     background-color: #c9add4;
+    text-align: center;
+    cursor: pointer;
 }
 
-.delete-link {
-  display: block; /* 블록 형태로 만들어 아래 간격 추가 */
-  text-decoration: none; /* 밑줄 제거 */
-  color: #000; /* 검은색 텍스트 */
-  font-size: 16px; /* 텍스트 크기 */
-  margin: 10px 0; /* 위아래 간격 */
-  font-weight: 600; /* 텍스트 굵기 */
-  text-align: center; /* 텍스트 중앙 정렬 */
+.button:hover {
+    background-color: #b898c1;
 }
 
-.delete-link:hover {
-  color: #f44336; /* 호버 시 빨간색 텍스트 */
+.button.delete {
+    background-color: #c5c5c5;
 }
-.button.complete {
-    background-color: #9575cd;
-    border-radius: 30px;
-    width: auto;
-    padding: 10px 40px;
-    margin: 0 auto; /* 가운데 정렬 */
+
+.button.delete:hover {
+    background-color: #aaaaaa;
 }

@@ -19,10 +19,12 @@
   "description": "A quest project using Express and ES6 modules.",
   "dependencies": {
     "express": "^4.21.1",
+    "express-session": "^1.18.1",
     "jotai": "^2.10.2",
     "mime": "^4.0.4",
     "multer": "^1.4.5-lts.1",
-    "readline-sync": "^1.4.10"
+    "readline-sync": "^1.4.10",
+    "xtend": "^4.0.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.7"

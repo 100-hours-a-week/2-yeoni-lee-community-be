@@ -26,13 +26,8 @@
                 <hr class="horizontal-rule"/>      
                 <p class="description">이미지</p>
                 <input type="file" id="memo_img" name="memo_img" accept="image/*">
-                <p class="description">작성시간</p>
-                <input type="datetime-local" id = "time" name="time">
-                <p class="description">작성자</p>
-                <input type="text" id = "username" name="username">
                 <article class="buttons">
                     <button class="button" type="submit">추가하기</button>
-
                 </article>
             </form>
         </article>
@@ -51,6 +46,12 @@
         document.getElementById('log_out_btn').addEventListener('click', () => {
             window.location.href = '/login';
         });
+        if (memo.img) {
+            memoImgElement.src = memo.img; // 게시물 폴더에서 이미지 로드
+        } else {
+            memoImgElement.src = '/uploads/default-memo.png'; // 기본 게시물 사진
+        }
+
     </script>
 </body>
 </html>

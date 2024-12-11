@@ -16,128 +16,108 @@
         </div>
         <h1 class="name">아무 말 대잔치</h1>
         <article class="post">
-            <h2 class="post-title">title</h2>
+            <h2 class="post-title" id="post-title">제목</h2>
             <div class="post-info">
-                <span class="username">username</span>
-                <span class="time">time</span>
-                <div class="action-buttons">
-                    <!-- 수정 버튼 -->
-                    <a class="edit" id="mod_memo" href="#">수정</a>
-                    <!-- 삭제 버튼 -->
-                    <button class="delete" id="delete-btn">삭제</button>
-                </div>
+                <span class="username" id="username">작성자</span>
+                <span class="time" id="time">작성 시간</span>
+                <span id="view-count" class="stat">조회수: 0</span>
             </div>
             <hr class="horizontal-rule" />
-            <!-- 이미지 추가 -->
             <div class="image-container">
                 <img id="memo-img" src="" alt="게시물 이미지">
             </div>
-            <p class="context">context</p>
+            <p class="context" id="context">내용</p>
+            <div class="like-section">
+                <button id="like-button" class="like-button">좋아요</button>
+                <span id="like-count">좋아요: 0</span>
+            </div>
         </article>
         <article class="write_comment">
-            <input type="text" id="comment-text"></textarea>
+            <input type="text" id="comment-text" placeholder="댓글을 입력해주세요.">
             <button id="submit-comment">댓글 작성</button>
         </article>
         <article class="comment_box" id="comment-box">
-            <!-- 댓글들이 여기 추가될 것입니다 -->
+            <!-- 댓글들이 여기 추가됩니다 -->
         </article>
-        
     </section>
     <script>
-        // 내 정보 보기 변경 버튼 클릭
+        // 버튼 동작: 내 정보 보기
         document.getElementById('mod_my_btn').addEventListener('click', () => {
             window.location.href = '/my_info';
         });
 
-        // 목록 버튼 클릭
-        document.getElementById('list_memo').addEventListener('click', () => {
-            window.location.href = '/memo_list';
-        });
-
+        // 버튼 동작: 게시물 작성
         document.getElementById('write_memo').addEventListener('click', () => {
             window.location.href = '/add_memo';
         });
 
-        // 로그아웃 버튼 클릭
+        // 버튼 동작: 게시물 목록
+        document.getElementById('list_memo').addEventListener('click', () => {
+            window.location.href = '/memo_list';
+        });
+
+        // 버튼 동작: 로그아웃
         document.getElementById('log_out_btn').addEventListener('click', () => {
             window.location.href = '/login';
         });
 
-        document.querySelectorAll('.edit').forEach(button => {
-            button.addEventListener('click', (e) => {
-                e.preventDefault();
-                const title = button.closest('.post').querySelector('.post-title').textContent;
-                window.location.href = `/mod_memo?title=${encodeURIComponent(title)}`;
-            });
+        // 좋아요 버튼 동작
+        document.getElementById('like-button').addEventListener('click', async () => {
+            const memoTitle = getQueryParams().title;
+
+            try {
+                const response = await fetch('/like_memo', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ title: memoTitle }),
+                });
+
+                if (response.ok) {
+                    const { like } = await response.json();
+                    document.getElementById('like-count').textContent = `좋아요: ${like}`;
+                } else {
+                    alert('좋아요 처리 중 오류가 발생했습니다.');
+                }
+            } catch (err) {
+                console.error('좋아요 처리 중 오류 발생:', err);
+            }
         });
 
+        // 댓글 작성 동작
         document.getElementById('submit-comment').addEventListener('click', async () => {
             const commentText = document.getElementById('comment-text').value.trim();
-            
+
             if (!commentText) {
                 alert('댓글을 입력해주세요.');
                 return;
             }
 
-            const memoTitle = getQueryParams().title; // 현재 게시물 제목을 가져옴
+            const memoTitle = getQueryParams().title;
 
             try {
-                const response = await fetch('/api/look_memo', {
-                    method: 'PATCH',
+                const response = await fetch('/add_comment', {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ title: memoTitle, comment: commentText }),
                 });
 
-                    if (response.ok) {
-                    const updatedMemo = await response.json();
-                    renderComments(updatedMemo.comments);
+                if (response.ok) {
+                    const { comments } = await response.json();
+                    renderComments(comments);
                     document.getElementById('comment-text').value = ''; // 입력 필드 비우기
                 } else {
-                    const errorData = await response.json();
-                    alert(`오류 발생: ${errorData.error}`);
+                    alert('댓글 작성 중 오류가 발생했습니다.');
                 }
             } catch (err) {
                 console.error('댓글 작성 중 오류 발생:', err);
-                alert('댓글 작성 중 오류가 발생했습니다.');
             }
         });
 
-         // 삭제 버튼 클릭
-        document.querySelectorAll('.delete').forEach(button => {
-            button.addEventListener('click', async (e) => {
-                e.preventDefault();
-                const title = button.closest('.post').querySelector('.post-title').textContent;
-                
-                if (confirm('정말 삭제하시겠습니까?')) {
-                    try {
-                        const response = await fetch('/delete_memo', {
-                            method: 'DELETE',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ title }),
-                        });
-
-                        if (response.ok) {
-                            alert('게시물이 삭제되었습니다.');
-                            window.location.href = `/memo_list`
-                        } else {
-                            const errorData = await response.json();
-                            alert(`오류 발생: ${errorData.error}`);
-                        }
-                    } catch (err) {
-                        console.error('삭제 요청 중 오류 발생:', err);
-                        alert('삭제 요청 중 오류가 발생했습니다.');
-                    }
-                }
-            });
-        });
-
-       
-
-        // URL의 쿼리 파라미터에서 데이터를 추출하는 함수
+        // URL의 쿼리 파라미터 추출
         function getQueryParams() {
             const params = new URLSearchParams(window.location.search);
             return {
@@ -145,68 +125,79 @@
                 context: params.get('context'),
                 username: params.get('username'),
                 time: params.get('time'),
-                img: params.get('img')
+                img: params.get('img'),
             };
         }
-    
-        // 데이터를 HTML 요소에 바인딩하는 함수
+
+        // 게시물 데이터 바인딩
         function renderMemoDetail() {
             const memo = getQueryParams();
-    
-            // 제목 설정
-            document.querySelector('.post-title').textContent = memo.title || '제목 없음';
-    
-            // 작성자 설정
-            document.querySelector('.username').textContent = memo.username || '익명';
-    
-            // 작성 시간 설정
-            document.querySelector('.time').textContent = memo.time || '0000-00-00 00:00:00';
-    
-            // 게시물 내용 설정
-            document.querySelector('.context').textContent = memo.context || '내용 없음';
-    
-            // 이미지 설정 (이미지가 있을 경우에만)
+
+            document.getElementById('post-title').textContent = memo.title || '제목 없음';
+            document.getElementById('username').textContent = memo.username || '익명';
+            document.getElementById('time').textContent = memo.time || '0000-00-00 00:00:00';
+            document.getElementById('context').textContent = memo.context || '내용 없음';
+
             if (memo.img) {
-                document.querySelector('#memo-img').src = memo.img;
+                document.getElementById('memo-img').src = memo.img;
             }
 
+            increaseViewCount(memo.title);
             fetchComments(memo.title);
         }
 
+        // 조회수 증가 요청
+        async function increaseViewCount(title) {
+            try {
+                const response = await fetch(`/increase_view?title=${encodeURIComponent(title)}`, {
+                    method: 'POST',
+                });
+
+                if (response.ok) {
+                    const { view } = await response.json();
+                    document.getElementById('view-count').textContent = `조회수: ${view}`;
+                }
+            } catch (err) {
+                console.error('조회수 증가 중 오류 발생:', err);
+            }
+        }
+
+        // 댓글 렌더링
         async function fetchComments(title) {
             try {
                 const response = await fetch(`/api/look_memo?title=${encodeURIComponent(title)}`);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                if (response.ok) {
+                    const { comments } = await response.json();
+                    renderComments(comments || []);
                 }
-                const memo = await response.json();
-                renderComments(memo.comments || []);
             } catch (err) {
-                console.error('댓글을 가져오는 중 오류 발생:', err);
+                console.error('댓글 가져오기 중 오류 발생:', err);
+            }
         }
-    }
-    // 댓글을 렌더링하는 함수
-    function renderComments(comments) {
-        const commentBox = document.getElementById('comment-box');
-        commentBox.innerHTML = ''; // 기존 댓글 제거
 
-        comments.forEach(comment => {
-            addCommentToDOM(comment);
-        });
-    }
+        // 댓글 DOM 렌더링
+        function renderComments(comments) {
+            const commentBox = document.getElementById('comment-box');
+            commentBox.innerHTML = '';
 
-    function addCommentToDOM(comment) {
-        const commentBox = document.getElementById('comment-box');
-        const commentElement = document.createElement('div');
-        commentElement.classList.add('comment');
-        commentElement.innerHTML = `
-            <p>${comment.username || '익명'}: ${comment.text}</p>`;
-        commentBox.appendChild(commentElement);
-    }
-        
+            if (comments.length === 0) {
+                commentBox.innerHTML = '<p>아직 댓글이 없습니다.</p>';
+                return;
+            }
+
+            comments.forEach((comment) => {
+                const commentElement = document.createElement('div');
+                commentElement.classList.add('comment');
+                commentElement.innerHTML = `
+                    <p><strong>${comment.username || '익명'}</strong>: ${comment.text}</p>
+                    <small>${new Date(comment.time).toLocaleString()}</small>
+                `;
+                commentBox.appendChild(commentElement);
+            });
+        }
+
         // 페이지 로드 시 데이터 바인딩
         document.addEventListener('DOMContentLoaded', renderMemoDetail);
     </script>
-    
 </body>
 </html>
