@@ -17,9 +17,10 @@
         </div>
         <article class="payload">
             <form id="memo-mod-form" method="POST" enctype="multipart/form-data">
-                <p class="description">제목 (수정 불가)*</p>
+                <input type="hidden" id="id" name="id">
+                <p class="description">제목</p>
                 <hr class="horizontal-rule"/>
-                <input type="text" id="title" name="title" readonly>
+                <input type="text" id="title" name="title" required>
                 <hr class="horizontal-rule"/>
                 <p class="description">내용*</p>
                 <hr class="horizontal-rule"/>
@@ -27,10 +28,6 @@
                 <hr class="horizontal-rule"/>      
                 <p class="description">이미지</p>
                 <input type="file" id="memo_img" name="memo_img" accept="image/*">
-                <p class="description">작성시간</p>
-                <input type="datetime-local" id="time" name="time">
-                <p class="description">작성자</p>
-                <input type="text" id="username" name="username">
                 <article class="buttons">
                     <button class="button" type="submit">수정하기</button>
                 </article>
@@ -38,71 +35,76 @@
         </article>
     </section>
     <script>
-        // 내 정보 보기 버튼 클릭
+        // 버튼 동작: 내 정보 보기
         document.getElementById('mod_my_btn').addEventListener('click', () => {
             window.location.href = '/my_info';
         });
 
-        // 게시물 작성 페이지 이동
+        // 버튼 동작: 게시물 작성 페이지 이동
         document.getElementById('write_memo').addEventListener('click', () => {
             window.location.href = '/add_memo';
         });
 
-        // 게시물 목록 페이지 이동
+        // 버튼 동작: 게시물 목록 페이지 이동
         document.getElementById('list_memo').addEventListener('click', () => {
             window.location.href = '/memo_list';
         });
 
-        // 로그아웃 버튼 클릭
+        // 버튼 동작: 로그아웃
         document.getElementById('log_out_btn').addEventListener('click', () => {
             window.location.href = '/login';
         });
 
-        // 쿼리 파라미터에서 데이터 가져오기
+        // URL의 쿼리 파라미터 추출
         function getQueryParams() {
             const params = new URLSearchParams(window.location.search);
             return {
-                title: params.get('title') // 제목 가져오기
+                id: params.get('id'), // 게시물 ID 가져오기
             };
         }
 
         // 기존 데이터를 로드하여 폼에 채우기
         async function loadMemoDetails() {
-            const { title } = getQueryParams();
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id'); // id 파라미터 가져오기
+
+            if (!id) {
+                console.error('URL에서 게시물 ID를 찾을 수 없습니다.');
+                alert('유효한 게시물 ID가 필요합니다.');
+                return;
+            }
 
             try {
-                const response = await fetch(`/api/look_memo?title=${encodeURIComponent(title)}`);
+                const response = await fetch(`/api/look_memo?id=${encodeURIComponent(id)}`);
                 if (!response.ok) {
-                    throw new Error('게시물을 불러오는 데 실패했습니다.');
+                    throw new Error('서버에서 게시물 데이터를 가져오지 못했습니다.');
                 }
-                const memo = await response.json();
 
-                // 폼 필드에 데이터 채우기
-                document.getElementById('title').value = memo.title || ''; // 제목
-                document.getElementById('context').value = memo.context || ''; // 내용
-                document.getElementById('time').value = memo.time ? new Date(memo.time).toISOString().slice(0, 16) : ''; // 시간
-                document.getElementById('username').value = memo.username || ''; // 작성자
+                const memo = await response.json();
+                console.log('불러온 게시물:', memo);
+
+                // 폼에 데이터 채우기
+                document.getElementById('id').value = memo.id || '';
+                document.getElementById('title').value = memo.title || '';
+                document.getElementById('context').value = memo.context || '';
+                document.getElementById('time').value = memo.time ? new Date(memo.time).toISOString().slice(0, 16) : '';
+                document.getElementById('username').value = memo.username || '';
             } catch (err) {
                 console.error('데이터 로드 중 오류 발생:', err);
                 alert('게시물을 불러오는 데 실패했습니다.');
             }
         }
 
+
+        // 폼 제출 시 게시물 수정 요청
         // 폼 제출 시 게시물 수정 요청
         document.getElementById('memo-mod-form').addEventListener('submit', async (event) => {
             event.preventDefault();
 
             const formData = new FormData(event.target);
 
-            const timeValue = document.getElementById('time').value;
-            if (timeValue) {
-                formData.set('time', new Date(timeValue).toISOString());
-            } else {
-                formData.delete('time'); // 빈 값 처리
-            }
-
             try {
-                const response = await fetch('/mod_memo', {
+                const response = await fetch(`/api/mod_memo`, {
                     method: 'PATCH',
                     body: formData,
                 });
@@ -115,16 +117,17 @@
                 const result = await response.json();
                 alert(result.message);
 
-                // 서버에서 반환된 리다이렉트 URL로 이동
-                window.location.href = result.redirectUrl;
+                // 수정 성공 시 상세보기 페이지로 리다이렉트
+                window.location.href = `/look_memo?id=${formData.get('id')}`;
             } catch (err) {
                 console.error('수정 요청 중 오류 발생:', err);
                 alert('게시물 수정 중 오류가 발생했습니다.');
             }
         });
 
+
         // 페이지 로드 시 데이터 로드
-        loadMemoDetails();
+        document.addEventListener('DOMContentLoaded', loadMemoDetails);
     </script>
 </body>
 </html>

@@ -5,6 +5,11 @@ import { fileURLToPath } from 'url';
 import userRoutes from './routes/route.js'; // route.js 파일 사용 (확장자 명시)
 import session from 'express-session'; // 세션
 import cookieParser from 'cookie-parser'; // 쿠키
+import sequelize from './models/db.js'; // DB 설정 파일 import
+import User from './models/user.js'; // User 모델 import
+import Memo from './models/memo.js';
+import Comment from './models/Comment.js';
+
 const app = express();
 const PORT = 8080;
 
@@ -31,7 +36,12 @@ app.use(express.static(path.join(__dirname, 'm_html'))); // 정적 파일 서빙
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/', userRoutes);
 
-// 서버 실행
-app.listen(PORT, () => {
-  console.log(`Server is running at http://localhost:${PORT}`);
+sequelize.sync({ force: false }).then(() => {
+  console.log('Database synchronized!');
+  // 서버 시작
+  app.listen(PORT, () => {
+    console.log(`Server is running at http://localhost:${PORT}`);
+  });
+}).catch((err) => {
+  console.error('Failed to synchronize database:', err);
 });

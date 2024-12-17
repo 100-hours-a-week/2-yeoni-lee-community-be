@@ -18,7 +18,7 @@
             <form id="memo-form" method="POST" action="/add_memo" enctype="multipart/form-data">
                 <p class="description">제목*</p>
                 <hr class="horizontal-rule"/>
-                <input type="text" id="title" name="title" required>
+                <input type="string" id="title" name="title" required>
                 <hr class="horizontal-rule"/>
                 <p class="description">내용*</p>
                 <hr class="horizontal-rule"/>
@@ -28,7 +28,6 @@
                 <input type="file" id="memo_img" name="memo_img" accept="image/*">
                 <article class="buttons">
                     <button class="button" type="submit">추가하기</button>
-                </article>
             </form>
         </article>
     </section>

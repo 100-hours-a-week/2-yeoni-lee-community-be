@@ -15,6 +15,10 @@
             <button class="menu" id="list_memo">게시물 목록</button>
         </div>
         <h1 class="name">아무 말 대잔치</h1>
+        <div class="action-buttons">
+            <button id="edit-memo" class="edit">수정</button>
+            <button id="delete-memo" class="delete">삭제</button>
+        </div>        
         <article class="post">
             <h2 class="post-title" id="post-title">제목</h2>
             <div class="post-info">
@@ -41,29 +45,47 @@
         </article>
     </section>
     <script>
-        // 버튼 동작: 내 정보 보기
-        document.getElementById('mod_my_btn').addEventListener('click', () => {
-            window.location.href = '/my_info';
+        // URL의 쿼리 파라미터 추출
+        function getQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                id: params.get('id'), // 게시물 ID
+            };
+        }
+
+        // 수정 버튼 동작
+        document.getElementById('edit-memo').addEventListener('click', () => {
+            const { id } = getQueryParams();
+            window.location.href = `/mod_memo?id=${encodeURIComponent(id)}`;
         });
 
-        // 버튼 동작: 게시물 작성
-        document.getElementById('write_memo').addEventListener('click', () => {
-            window.location.href = '/add_memo';
-        });
+        // 삭제 버튼 동작
+        document.getElementById('delete-memo').addEventListener('click', async () => {
+            const { id } = getQueryParams();
 
-        // 버튼 동작: 게시물 목록
-        document.getElementById('list_memo').addEventListener('click', () => {
-            window.location.href = '/memo_list';
-        });
+            if (!confirm('정말로 삭제하시겠습니까?')) return;
 
-        // 버튼 동작: 로그아웃
-        document.getElementById('log_out_btn').addEventListener('click', () => {
-            window.location.href = '/login';
+            try {
+                const response = await fetch('/delete_memo', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id }),
+                });
+
+                if (response.ok) {
+                    alert('게시물이 삭제되었습니다.');
+                    window.location.href = '/memo_list'; // 목록 페이지로 이동
+                } else {
+                    alert('게시물 삭제 중 오류가 발생했습니다.');
+                }
+            } catch (err) {
+                console.error('게시물 삭제 중 오류 발생:', err);
+            }
         });
 
         // 좋아요 버튼 동작
         document.getElementById('like-button').addEventListener('click', async () => {
-            const memoTitle = getQueryParams().title;
+            const { id } = getQueryParams();
 
             try {
                 const response = await fetch('/like_memo', {
@@ -71,7 +93,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ title: memoTitle }),
+                    body: JSON.stringify({ id }),
                 });
 
                 if (response.ok) {
@@ -88,13 +110,12 @@
         // 댓글 작성 동작
         document.getElementById('submit-comment').addEventListener('click', async () => {
             const commentText = document.getElementById('comment-text').value.trim();
+            const { id } = getQueryParams();
 
             if (!commentText) {
                 alert('댓글을 입력해주세요.');
                 return;
             }
-
-            const memoTitle = getQueryParams().title;
 
             try {
                 const response = await fetch('/add_comment', {
@@ -102,7 +123,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ title: memoTitle, comment: commentText }),
+                    body: JSON.stringify({ id, comment: commentText }),
                 });
 
                 if (response.ok) {
@@ -117,39 +138,38 @@
             }
         });
 
-        // URL의 쿼리 파라미터 추출
-        function getQueryParams() {
-            const params = new URLSearchParams(window.location.search);
-            return {
-                title: params.get('title'),
-                context: params.get('context'),
-                username: params.get('username'),
-                time: params.get('time'),
-                img: params.get('img'),
-            };
-        }
-
         // 게시물 데이터 바인딩
-        function renderMemoDetail() {
-            const memo = getQueryParams();
+        async function renderMemoDetail() {
+            const { id } = getQueryParams();
 
-            document.getElementById('post-title').textContent = memo.title || '제목 없음';
-            document.getElementById('username').textContent = memo.username || '익명';
-            document.getElementById('time').textContent = memo.time || '0000-00-00 00:00:00';
-            document.getElementById('context').textContent = memo.context || '내용 없음';
+            try {
+                const response = await fetch(`/api/look_memo?id=${encodeURIComponent(id)}`);
+                if (!response.ok) {
+                    throw new Error('게시물을 불러오는 데 실패했습니다.');
+                }
+                const memo = await response.json();
 
-            if (memo.img) {
-                document.getElementById('memo-img').src = memo.img;
+                document.getElementById('post-title').textContent = memo.title || '제목 없음';
+                document.getElementById('username').textContent = memo.username || '익명';
+                document.getElementById('time').textContent = memo.time || '0000-00-00 00:00:00';
+                document.getElementById('context').textContent = memo.context || '내용 없음';
+
+                if (memo.img) {
+                    document.getElementById('memo-img').src = memo.img;
+                }
+
+                increaseViewCount(id);
+                fetchComments(id);
+            } catch (err) {
+                console.error('데이터 로드 중 오류 발생:', err);
+                alert('게시물을 불러오는 데 실패했습니다.');
             }
-
-            increaseViewCount(memo.title);
-            fetchComments(memo.title);
         }
 
         // 조회수 증가 요청
-        async function increaseViewCount(title) {
+        async function increaseViewCount(id) {
             try {
-                const response = await fetch(`/increase_view?title=${encodeURIComponent(title)}`, {
+                const response = await fetch(`/increase_view?id=${encodeURIComponent(id)}`, {
                     method: 'POST',
                 });
 
@@ -162,10 +182,10 @@
             }
         }
 
-        // 댓글 렌더링
-        async function fetchComments(title) {
+        // 댓글 가져오기
+        async function fetchComments(id) {
             try {
-                const response = await fetch(`/api/look_memo?title=${encodeURIComponent(title)}`);
+                const response = await fetch(`/api/comments?memoId=${encodeURIComponent(id)}`);
                 if (response.ok) {
                     const { comments } = await response.json();
                     renderComments(comments || []);
@@ -198,6 +218,8 @@
 
         // 페이지 로드 시 데이터 바인딩
         document.addEventListener('DOMContentLoaded', renderMemoDetail);
+
+
     </script>
 </body>
 </html>
