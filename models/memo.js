@@ -1,7 +1,14 @@
 import { DataTypes } from 'sequelize';
 import sequelize from './db.js';
 
-const Memo = sequelize.define('Memo', {
+const Memo = sequelize.define(
+  'Memo', 
+  {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
   title: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -37,6 +44,9 @@ const Memo = sequelize.define('Memo', {
     allowNull: false,
     defaultValue: 0,
   },
+},
+{charset: 'utf8mb4', // 문자셋 설정
+  collate: 'utf8mb4_general_ci', // 대소문자 비교 규칙 설정
 });
 
 export default Memo;

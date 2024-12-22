@@ -4,8 +4,9 @@ import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import { addComment, deleteComment, likeMemo, increaseViewCount } from '../controllers/controller3.js';
-import { addMemo, getMemoList, look_selected_memo, updateMemo, delete_memo } from '../controllers/controller.js';
+
+import { addComment, getComments, deleteComment, likeMemo, increaseViewCount } from '../controllers/controller3.js';
+import { addMemo, getMemoForEdit, getMemoList, look_selected_memo, updateMemo, delete_memo } from '../controllers/controller.js';
 import { registerUser, loginUser, my_info, updatePw, look_my_info, delete_user } from '../controllers/controller2.js';
 import { isAuthenticated } from '../middleware/auth.js';
 
@@ -75,21 +76,21 @@ router.get('/look_memo', (req, res) => {
 
 //router.patch('/api/look_memo', updateMemo);
 
-// 댓글 삭제 라우트 추가
-router.delete('/delete_comment', isAuthenticated, deleteComment);
-
 //////////5. 게시물 수정/////////
 // 페이지 서빙
+router.get('/api/mod_memo', isAuthenticated, getMemoForEdit);
 router.get('/mod_memo', (req, res) => {
   res.sendFile(path.join(__dirname, '../m_html', '5_mod_memo.html'));
 });
 
-router.patch('/mod_memo', isAuthenticated, updateMemo);
+router.patch('/mod_memo', isAuthenticated, uploadMemo.single('memo_img'), updateMemo);
 
 
 //////댓글달기////////
 router.post('/add_comment', isAuthenticated, addComment);
-
+router.get('/api/comments', getComments); 
+  // 댓글 삭제 라우트 추가
+router.delete('/delete_comment', isAuthenticated, deleteComment);
 //////////7. 내 정보 보기////////
 // 페이지 서빙
 router.get('/api/my_info', isAuthenticated, my_info);

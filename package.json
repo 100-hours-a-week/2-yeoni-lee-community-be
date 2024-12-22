@@ -18,9 +18,11 @@
   "license": "ISC",
   "description": "A quest project using Express and ES6 modules.",
   "dependencies": {
+    "dayjs": "^1.11.13",
     "express": "^4.21.1",
     "express-session": "^1.18.1",
     "jotai": "^2.10.2",
+    "mariadb": "^3.4.0",
     "mime": "^4.0.4",
     "multer": "^1.4.5-lts.1",
     "mysql": "^2.18.1",

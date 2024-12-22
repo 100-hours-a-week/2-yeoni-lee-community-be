@@ -66,29 +66,27 @@
         // 기존 데이터를 로드하여 폼에 채우기
         async function loadMemoDetails() {
             const params = new URLSearchParams(window.location.search);
-            const id = params.get('id'); // id 파라미터 가져오기
+            const id = params.get('id'); // URL 파라미터에서 게시물 ID 추출
 
             if (!id) {
-                console.error('URL에서 게시물 ID를 찾을 수 없습니다.');
                 alert('유효한 게시물 ID가 필요합니다.');
                 return;
             }
 
             try {
-                const response = await fetch(`/api/look_memo?id=${encodeURIComponent(id)}`);
+                const response = await fetch(`/api/mod_memo?id=${encodeURIComponent(id)}`);
+
                 if (!response.ok) {
-                    throw new Error('서버에서 게시물 데이터를 가져오지 못했습니다.');
+                    const error = await response.json();
+                    throw new Error(error.error || '게시물을 불러오는 데 실패했습니다.');
                 }
 
-                const memo = await response.json();
-                console.log('불러온 게시물:', memo);
+                const { memo } = await response.json();
 
                 // 폼에 데이터 채우기
-                document.getElementById('id').value = memo.id || '';
+                document.getElementById('id').value = memo.id;
                 document.getElementById('title').value = memo.title || '';
                 document.getElementById('context').value = memo.context || '';
-                document.getElementById('time').value = memo.time ? new Date(memo.time).toISOString().slice(0, 16) : '';
-                document.getElementById('username').value = memo.username || '';
             } catch (err) {
                 console.error('데이터 로드 중 오류 발생:', err);
                 alert('게시물을 불러오는 데 실패했습니다.');
@@ -96,15 +94,22 @@
         }
 
 
-        // 폼 제출 시 게시물 수정 요청
-        // 폼 제출 시 게시물 수정 요청
+
         document.getElementById('memo-mod-form').addEventListener('submit', async (event) => {
             event.preventDefault();
 
             const formData = new FormData(event.target);
+            // URL에서 id 파라미터 추출
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id'); // 단일 값으로 가져오기
 
+            if (!formData.has('id')) {
+                formData.append('id', id);
+            }
+
+    
             try {
-                const response = await fetch(`/api/mod_memo`, {
+                const response = await fetch(`/mod_memo`, {
                     method: 'PATCH',
                     body: formData,
                 });
@@ -118,13 +123,12 @@
                 alert(result.message);
 
                 // 수정 성공 시 상세보기 페이지로 리다이렉트
-                window.location.href = `/look_memo?id=${formData.get('id')}`;
+                window.location.href = `/look_memo?id=${id}`;
             } catch (err) {
                 console.error('수정 요청 중 오류 발생:', err);
                 alert('게시물 수정 중 오류가 발생했습니다.');
             }
         });
-
 
         // 페이지 로드 시 데이터 로드
         document.addEventListener('DOMContentLoaded', loadMemoDetails);

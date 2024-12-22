@@ -1,47 +1,53 @@
-//app.js
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import userRoutes from './routes/route.js'; // route.js 파일 사용 (확장자 명시)
 import session from 'express-session'; // 세션
 import cookieParser from 'cookie-parser'; // 쿠키
 import sequelize from './models/db.js'; // DB 설정 파일 import
-import User from './models/user.js'; // User 모델 import
-import Memo from './models/memo.js';
-import Comment from './models/Comment.js';
+import userRoutes from './routes/route.js'; // 메인 라우터
+import sessionRouter from './routes/session.js'; // 세션 확인 라우터
 
 const app = express();
 const PORT = 8080;
 
+// __dirname 설정
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-// 세션 및 쿠키 미들웨어 추가
+
+// 미들웨어 설정
 app.use(cookieParser());
 app.use(
   session({
-    secret: 'your_secret_key', // 세션 암호화를 위한 키
+    secret: 'your_secret_key', // 세션 암호화 키
     resave: false, // 세션이 변경되지 않아도 저장 여부
-    saveUninitialized: true, // 초기화되지 않은 세션 저장 여부
+    saveUninitialized: false, // 초기화되지 않은 세션 저장 여부
     cookie: {
       httpOnly: true, // JavaScript로 쿠키 접근 불가
-      secure: false, // HTTPS에서만 전송 (개발 단계에서는 false)
-      maxAge: 1000 * 60 * 30, // 30분 유효
+      secure: false, // HTTPS에서만 사용 (개발 단계에서 false)
+      maxAge: 1000 * 60 * 30, // 세션 유지 시간: 30분
     },
   })
 );
-// JSON 데이터 파싱 미들웨어
-app.use(express.json());
+app.use(express.json()); // JSON 파싱
 app.use(express.urlencoded({ extended: true })); // URL-encoded 데이터 파싱
-app.use(express.static(path.join(__dirname, 'm_html'))); // 정적 파일 서빙
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use('/', userRoutes);
 
-sequelize.sync({ force: false }).then(() => {
-  console.log('Database synchronized!');
-  // 서버 시작
-  app.listen(PORT, () => {
-    console.log(`Server is running at http://localhost:${PORT}`);
+// 정적 파일 경로 설정
+app.use(express.static(path.join(__dirname, 'm_html')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// 라우터 설정
+app.use('/', sessionRouter); // 세션 확인 라우터
+app.use('/', userRoutes); // 메인 라우터
+
+// 데이터베이스 동기화 후 서버 시작
+sequelize
+  .sync({ force: false }) // 데이터베이스와 테이블 동기화 (force: false -> 기존 데이터 유지)
+  .then(() => {
+    console.log('Database synchronized!');
+    app.listen(PORT, () => {
+      console.log(`Server is running at http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('Failed to synchronize database:', err);
   });
-}).catch((err) => {
-  console.error('Failed to synchronize database:', err);
-});

@@ -1,5 +1,6 @@
 import Memo from '../models/memo.js'; // Sequelize Memo 모델
 import Comment from '../models/Comment.js'; // Sequelize Comment 모델
+import dayjs from 'dayjs'; // 날짜 포맷팅 라이브러리
 
 // 메모 추가하기
 const addMemo = async (req, res) => {
@@ -12,7 +13,7 @@ const addMemo = async (req, res) => {
     const memoData = {
       title: req.body.title,
       context: req.body.context,
-      time: new Date(),
+      time: dayjs().format('YYYY-MM-DD HH:mm:ss'), // 포맷된 시간
       username: req.session.user.nickname,
       img: file ? `/uploads/${file.filename}` : null,
       like: 0,
@@ -21,7 +22,7 @@ const addMemo = async (req, res) => {
     };
 
     const newMemo = await Memo.create(memoData);
-    res.status(201).json({ message: '게시물이 성공적으로 추가되었습니다.', memo: newMemo });
+    res.redirect('/memo_list');
   } catch (err) {
     console.error('게시물 저장 중 오류 발생:', err);
     res.status(500).json({ error: '게시물을 저장하는 데 실패했습니다.' });
@@ -32,11 +33,17 @@ const addMemo = async (req, res) => {
 const getMemoList = async (req, res) => {
   try {
     const memos = await Memo.findAll({
-      limit: 3,
       order: [['time', 'DESC']],
       include: [Comment], // 댓글 포함
     });
-    res.status(200).json(memos);
+
+    // time 필드 포맷 적용
+    const formattedMemos = memos.map((memo) => ({
+      ...memo.toJSON(),
+      time: dayjs(memo.time).format('YYYY-MM-DD HH:mm:ss'), // 포맷 적용
+    }));
+
+    res.status(200).json(formattedMemos);
   } catch (err) {
     console.error('메모 목록 조회 중 오류 발생:', err);
     res.status(500).json({ error: '메모 데이터를 가져오는 데 실패했습니다.' });
@@ -57,12 +64,49 @@ const look_selected_memo = async (req, res) => {
       return res.status(404).json({ error: '게시물을 찾을 수 없습니다.' });
     }
 
-    res.status(200).json(memo);
+    const formattedMemo = {
+      ...memo.toJSON(), // Sequelize 모델을 JSON 객체로 변환
+      time: dayjs(memo.time).format('YYYY-MM-DD HH:mm:ss'), // 포맷 적용
+    };
+
+
+    res.status(200).json(formattedMemo);
   } catch (err) {
     console.error('메모 상세보기 중 오류 발생:', err);
     res.status(500).json({ error: '메모 데이터를 가져오는 데 실패했습니다.' });
   }
 };
+
+// Sequelize Memo 모델
+
+// 게시물 수정 데이터 로드 및 작성자 확인
+const getMemoForEdit = async (req, res) => {
+  try {
+    const { id } = req.query;
+
+    if (!id) {
+      return res.status(400).json({ error: '게시물 ID가 필요합니다.' });
+    }
+
+    // 댓글은 제외하고 게시물 데이터만 가져오기
+    const memo = await Memo.findOne({
+      where: { id: Number(id) },
+      attributes: ['id', 'title', 'context', 'time', 'username', 'img'], // 필요한 필드만 가져옴
+    });
+
+    if (!memo) {
+      return res.status(404).json({ error: '해당 게시물을 찾을 수 없습니다.' });
+    }
+
+    res.status(200).json({ memo });
+  } catch (err) {
+    console.error('게시물 불러오기 중 오류 발생:', err);
+    res.status(500).json({ error: '게시물을 불러오는 데 실패했습니다.' });
+  }
+};
+
+
+
 
 // 메모 수정
 const updateMemo = async (req, res) => {
@@ -119,4 +163,4 @@ const delete_memo = async (req, res) => {
   }
 };
 
-export { addMemo, getMemoList, look_selected_memo, updateMemo, delete_memo };
+export { getMemoForEdit, addMemo, getMemoList, look_selected_memo, updateMemo, delete_memo };
