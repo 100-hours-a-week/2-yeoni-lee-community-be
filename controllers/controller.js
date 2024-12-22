@@ -36,6 +36,7 @@ const getMemoList = async (req, res) => {
       order: [['time', 'DESC']],
       include: [Comment], // 댓글 포함
     });
+    console.log(memos); // 반환되는 데이터 확인
 
     // time 필드 포맷 적용
     const formattedMemos = memos.map((memo) => ({
@@ -126,6 +127,11 @@ const updateMemo = async (req, res) => {
       return res.status(404).json({ error: '수정하려는 게시물을 찾을 수 없습니다.' });
     }
 
+    // 작성자 확인
+    if (memo.username !== req.session.user.nickname) {
+      return res.status(403).json({ error: '수정 권한이 없습니다.' });
+    }
+
     // 업데이트할 필드만 조건적으로 설정
     const updatedFields = { title, context };
       if (req.file) {
@@ -153,6 +159,11 @@ const delete_memo = async (req, res) => {
 
     if (!memo) {
       return res.status(404).json({ error: '메모를 찾을 수 없습니다.' });
+    }
+
+    // 작성자 확인
+    if (memo.username !== req.session.user.nickname) {
+      return res.status(403).json({ error: '삭제 권한이 없습니다.' });
     }
 
     await memo.destroy();

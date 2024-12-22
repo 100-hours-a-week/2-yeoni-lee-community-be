@@ -30,6 +30,7 @@ app.use(
 );
 app.use(express.json()); // JSON 파싱
 app.use(express.urlencoded({ extended: true })); // URL-encoded 데이터 파싱
+app.use('/profile', express.static(path.join(__dirname, 'profile')));
 
 // 정적 파일 경로 설정
 app.use(express.static(path.join(__dirname, 'm_html')));

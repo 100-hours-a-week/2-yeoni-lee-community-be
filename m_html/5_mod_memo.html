@@ -8,12 +8,16 @@
 </head>
 <body>
     <section class="wrap">
-        <h1 class="name">게시글 수정</h1>
-        <div class="buttons">
-            <button class="menu" id="log_out_btn">로그아웃</button>
-            <button class="menu" id="write_memo">게시물 작성</button>
-            <button class="menu" id="mod_my_btn">내 정보 수정</button>
-            <button class="menu" id="list_memo">게시물 목록</button>
+        <h1 class="name">아무 말 대잔치</h1>
+        <div class="dropdown">
+            <button class="dropbtn"> 
+                <span 
+                class="dropbtn_icon">profile-pic</span>
+            </button>
+            <div class="dropdown-content">
+                <button class="menu" id="log_out_btn">로그아웃</button>
+                <button class="menu" id="mod_my_btn">내 정보 수정</button>
+            </div>
         </div>
         <article class="payload">
             <form id="memo-mod-form" method="POST" enctype="multipart/form-data">

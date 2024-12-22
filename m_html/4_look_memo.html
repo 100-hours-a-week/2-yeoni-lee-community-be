@@ -8,14 +8,16 @@
 </head>
 <body>
     <section class="wrap">
-        <!-- 상단 버튼 -->
-        <div class="buttons">
-            <button class="menu" id="log_out_btn">로그아웃</button>
-            <button class="menu" id="write_memo">게시물 작성</button>
-            <button class="menu" id="mod_my_btn">내 정보 수정</button>
-            <button class="menu" id="list_memo">게시물 목록</button>
-        </div>
         <h1 class="name">아무 말 대잔치</h1>
+        <div class="dropdown">
+            <button class="dropbtn"> 
+                <span class="dropbtn_icon">profile-pic</span>
+            </button>
+            <div class="dropdown-content">
+                <button class="menu" id="log_out_btn">로그아웃</button>
+                <button class="menu" id="mod_my_btn">내 정보 수정</button>
+            </div>
+        </div>
 
         <!-- 수정/삭제 버튼 -->
         <div class="action-buttons">
@@ -55,118 +57,183 @@
     </section>
 
     <script>
-        // URL에서 ID 추출
-        function getQueryParams() {
-            const params = new URLSearchParams(window.location.search);
-            return { id: params.get('id') }; // 게시물 ID 가져오기
-        }
 
-        // 페이지 로드 시 게시물 데이터 바인딩
+        // 내 정보 보기 버튼 클릭
+        document.getElementById('mod_my_btn').addEventListener('click', () => {
+            window.location.href = '/my_info';
+        });
+
+        // 로그아웃 버튼 클릭
+        document.getElementById('log_out_btn').addEventListener('click', () => {
+            window.location.href = '/login';
+        });
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const editButton = document.getElementById('edit-memo');
+            const deleteButton = document.getElementById('delete-memo');
+            const likeButton = document.getElementById('like-button');
+            const submitCommentButton = document.getElementById('submit-comment');
+
+            // 게시물 데이터 로드 및 렌더링
+            await renderMemoDetail();
+
+            if (editButton) {
+                editButton.addEventListener('click', () => {
+                    const { id } = getQueryParams();
+                    window.location.href = `/mod_memo?id=${encodeURIComponent(id)}`;
+                });
+            }
+
+            if (deleteButton) {
+                deleteButton.addEventListener('click', async () => {
+                    const { id } = getQueryParams();
+
+                    if (!confirm('정말로 게시물을 삭제하시겠습니까?')) return;
+
+                    try {
+                        const response = await fetch('/delete_memo', {
+                            method: 'DELETE',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ id }),
+                        });
+
+                        if (response.ok) {
+                            alert('게시물이 삭제되었습니다.');
+                            window.location.href = '/memo_list';
+                        } else {
+                            const error = await response.json();
+                            alert(error.error || '게시물 삭제 실패');
+                        }
+                    } catch (err) {
+                        console.error('게시물 삭제 오류:', err);
+                    }
+                });
+            }
+
+            if (likeButton) {
+                likeButton.addEventListener('click', async () => {
+                    const { id } = getQueryParams();
+
+                    try {
+                        const response = await fetch('/like_memo', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ id }),
+                        });
+
+                        if (response.ok) {
+                            const { like } = await response.json();
+                            document.getElementById('like-count').textContent = `좋아요: ${like}`;
+                        } else {
+                            alert('좋아요 처리 실패');
+                        }
+                    } catch (err) {
+                        console.error('좋아요 처리 오류:', err);
+                    }
+                });
+            }
+
+            if (submitCommentButton) {
+                submitCommentButton.addEventListener('click', async () => {
+                    const commentText = document.getElementById('comment-text').value.trim();
+                    const { id } = getQueryParams();
+
+                    if (!commentText) {
+                        alert('댓글을 입력해주세요.');
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch('/add_comment', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ memoId: id, text: commentText }),
+                        });
+
+                        if (response.ok) {
+                            const { comments } = await response.json();
+                            renderComments(comments);
+                            document.getElementById('comment-text').value = '';
+                        } else {
+                            alert('댓글 작성 실패');
+                        }
+                    } catch (err) {
+                        console.error('댓글 작성 오류:', err);
+                    }
+                });
+            }
+        });
+
         async function renderMemoDetail() {
             const { id } = getQueryParams();
 
             try {
                 const response = await fetch(`/api/look_memo?id=${encodeURIComponent(id)}`);
-                if (!response.ok) throw new Error('게시물을 불러오는 데 실패했습니다.');
-
+                if (!response.ok) throw new Error('게시물 로딩 실패');
                 const memo = await response.json();
+                const currentUser = await fetch('/api/check_session')
+                    .then(res => res.json())
+                    .catch(() => ({ user: null }));
                 document.getElementById('post-title').textContent = memo.title || '제목 없음';
                 document.getElementById('username').textContent = memo.username || '익명';
                 document.getElementById('time').textContent = memo.time || '0000-00-00 00:00:00';
                 document.getElementById('context').textContent = memo.context || '내용 없음';
 
-                const memoImgElement = document.getElementById('memo-img');
-                if (memo.img) {
-                    memoImgElement.src = memo.img;
-                } else {
-                    document.getElementById('image-container').style.display = 'none';
-                }
+                const imgElement = document.getElementById('memo-img');
+                if (memo.img) imgElement.src = memo.img;
+                else document.getElementById('image-container').style.display = 'none';
 
                 document.getElementById('like-count').textContent = `좋아요: ${memo.like || 0}`;
                 document.getElementById('view-count').textContent = `조회수: ${memo.view || 0}`;
+                if (currentUser.user?.nickname !== memo.username) {
+                    document.getElementById('edit-memo').style.display = 'none';
+                    document.getElementById('delete-memo').style.display = 'none';
+                }
                 fetchComments(id);
             } catch (err) {
-                console.error(err);
-                alert('게시물을 불러오는 데 실패했습니다.');
+                console.error('게시물 렌더링 실패:', err);
+                alert('게시물을 불러오지 못했습니다.');
             }
         }
 
-        // 게시물 수정 기능
-        document.getElementById('edit-memo').addEventListener('click', () => {
-            const { id } = getQueryParams(); // URL에서 게시물 ID 추출
-            window.location.href = `/mod_memo?id=${encodeURIComponent(id)}`; // 수정 페이지로 리다이렉트
-        });
-
-
-        // 게시물 삭제 기능
-        document.getElementById('delete-memo').addEventListener('click', async () => {
-            const { id } = getQueryParams(); // URL에서 게시물 ID 추출
-
-            if (!confirm('정말로 게시물을 삭제하시겠습니까?')) return;
-
-            try {
-                const response = await fetch('/delete_memo', {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id }),
-                });
-
-                if (response.ok) {
-                    alert('게시물이 삭제되었습니다.');
-                    window.location.href = '/memo_list'; // 게시물 목록 페이지로 이동
-                } else {
-                    const error = await response.json();
-                    alert(error.error || '게시물 삭제 중 오류가 발생했습니다.');
-                }
-            } catch (err) {
-                console.error('게시물 삭제 중 오류 발생:', err);
-                alert('게시물 삭제에 실패했습니다.');
-            }
-        });
-
-
-        // 댓글 가져오기
         async function fetchComments(id) {
             try {
-                const response = await fetch(`/api/comments?memoId=${encodeURIComponent(id)}`);
+                const response = await fetch(`/api/comments?memoId=${id}`);
                 const { comments } = await response.json();
                 renderComments(comments || []);
             } catch (err) {
-                console.error('댓글 가져오기 실패:', err);
+                console.error('댓글 로딩 오류:', err);
             }
         }
 
-        // 댓글 렌더링 함수
-        function renderComments(comments) {
+        async function renderComments(comments) {
             const commentBox = document.getElementById('comment-box');
             commentBox.innerHTML = '';
 
-            if (comments.length === 0) {
+            if (!comments.length) {
                 commentBox.innerHTML = '<p>댓글이 없습니다.</p>';
                 return;
             }
 
+            const currentUser = await fetch('/api/check_session')
+                .then(res => res.json())
+                .catch(() => ({ user: null }));
+
             comments.forEach(comment => {
-                const commentElement = document.createElement('div');
-                commentElement.classList.add('comment');
-                commentElement.innerHTML = `
+                const div = document.createElement('div');
+                div.classList.add('comment');
+                div.innerHTML = `
                     <p><strong>${comment.username}</strong>: ${comment.text}</p>
                     <small>${new Date(comment.createdAt).toLocaleString()}</small>
                     <button class="delete-comment" data-id="${comment.id}">삭제</button>
                 `;
-                commentBox.appendChild(commentElement);
+                commentBox.appendChild(div);
             });
 
-            // 삭제 버튼에 이벤트 리스너 추가
-            registerDeleteCommentEvents();
-        }
-
-        // 댓글 삭제 이벤트 리스너
-        function registerDeleteCommentEvents() {
-            document.querySelectorAll('.delete-comment').forEach(button => {
-                button.addEventListener('click', async (event) => {
-                    const commentId = event.target.dataset.id; // 삭제할 댓글 ID
+            document.querySelectorAll('.delete-comment').forEach(btn => {
+                btn.addEventListener('click', async e => {
                     const { id: memoId } = getQueryParams();
+                    const commentId = e.target.dataset.id;
 
                     try {
                         const response = await fetch('/delete_comment', {
@@ -177,54 +244,21 @@
 
                         if (response.ok) {
                             const { comments } = await response.json();
-                            renderComments(comments); // 최신 댓글 렌더링
+                            renderComments(comments);
                         } else {
                             alert('댓글 삭제 실패');
                         }
                     } catch (err) {
-                        console.error('댓글 삭제 중 오류 발생:', err);
+                        console.error('댓글 삭제 오류:', err);
                     }
                 });
             });
         }
 
-        // 댓글 작성 기능
-        document.getElementById('submit-comment').addEventListener('click', async () => {
-            const commentText = document.getElementById('comment-text').value.trim();
-            const { id } = getQueryParams();
-
-            if (!commentText) {
-                alert('댓글을 입력해주세요.');
-                return;
-            }
-
-            try {
-                const response = await fetch('/add_comment', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ memoId: id, text: commentText }),
-                });
-
-                if (response.ok) {
-                    const { comments } = await response.json();
-                    renderComments(comments); // 최신 댓글 렌더링
-                    document.getElementById('comment-text').value = ''; // 입력 필드 초기화
-                } else {
-                    alert('댓글 작성 실패');
-                }
-            } catch (err) {
-                console.error('댓글 작성 중 오류 발생:', err);
-            }
-        });
-
-        // 버튼 동작
-        document.getElementById('log_out_btn').addEventListener('click', () => window.location.href = '/login');
-        document.getElementById('write_memo').addEventListener('click', () => window.location.href = '/add_memo');
-        document.getElementById('list_memo').addEventListener('click', () => window.location.href = '/memo_list');
-        document.getElementById('mod_my_btn').addEventListener('click', () => window.location.href = '/my_info');
-
-        // 초기화
-        document.addEventListener('DOMContentLoaded', renderMemoDetail);
+        function getQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            return { id: params.get('id') };
+        }
     </script>
 </body>
 </html>

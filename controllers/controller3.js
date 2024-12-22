@@ -78,6 +78,11 @@ const deleteComment = async (req, res) => {
       return res.status(404).json({ error: '댓글을 찾을 수 없습니다.' });
     }
 
+    // 작성자 확인
+    if (comment.username !== req.session.user.nickname) {
+      return res.status(403).json({ error: '삭제 권한이 없습니다.' });
+    }
+
     // 댓글 삭제
     await comment.destroy();
 
