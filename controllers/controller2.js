@@ -1,5 +1,5 @@
 //controller2.js
-
+import { Op } from 'sequelize'; // 추가
 import User from '../models/user.js';
 import Memo from '../models/memo.js'; // Memo 모델 추가
 import Comment from '../models/Comment.js'; // Comment 모델 추가

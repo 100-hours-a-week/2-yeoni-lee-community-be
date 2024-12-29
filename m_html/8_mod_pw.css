@@ -5,16 +5,17 @@ body {
   display: flex;
   justify-content: center;
   align-items: center; /* 수직 가운데 정렬 */
-  background-color: #EEE9EF;
+  background-color: #ffffff;
   font-family: "Noto Sans KR", sans-serif;
 }
 
 .wrap {
   width: 100%;
   max-width: 500px;
-  background-color: #E0CFE3;
+  background-color: #ffffff;
   padding: 20px;
   border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .header {

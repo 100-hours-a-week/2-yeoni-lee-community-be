@@ -44,16 +44,6 @@
             window.location.href = '/my_info';
         });
 
-        // 버튼 동작: 게시물 작성 페이지 이동
-        document.getElementById('write_memo').addEventListener('click', () => {
-            window.location.href = '/add_memo';
-        });
-
-        // 버튼 동작: 게시물 목록 페이지 이동
-        document.getElementById('list_memo').addEventListener('click', () => {
-            window.location.href = '/memo_list';
-        });
-
         // 버튼 동작: 로그아웃
         document.getElementById('log_out_btn').addEventListener('click', () => {
             window.location.href = '/login';
@@ -103,9 +93,8 @@
             event.preventDefault();
 
             const formData = new FormData(event.target);
-            // URL에서 id 파라미터 추출
             const params = new URLSearchParams(window.location.search);
-            const id = params.get('id'); // 단일 값으로 가져오기
+            const id = params.get('id'); 
 
             if (!formData.has('id')) {
                 formData.append('id', id);
