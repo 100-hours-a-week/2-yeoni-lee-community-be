@@ -39,14 +39,21 @@
             </div>
             <p class="context" id="context">내용</p>
             <div class="like-section">
-                <button id="like-button" class="like-button">좋아요</button>
-                <span id="like-count">좋아요: 0</span>
+                <div class="like-button">
+                    <span id="like-count">0</span>좋아요수
+                </div>
+                <div class="view-button">
+                    <span id="view-count">0</span>조회수
+                </div>
+                <div class="comment-button">
+                    <span id="comment-count">0</span>댓글
+                </div>
             </div>
         </article>
 
         <!-- 댓글 입력 -->
         <article class="write_comment">
-            <input type="text" id="comment-text" placeholder="댓글을 입력해주세요.">
+            <textarea id="comment-text" placeholder="댓글을 입력해주세요."></textarea>
             <button id="submit-comment">댓글 작성</button>
         </article>
 
@@ -57,208 +64,283 @@
     </section>
 
     <script>
+document.addEventListener("DOMContentLoaded", async () => {
+    const { id } = getQueryParams();
+    await increaseViewCount(id); // 조회수 증가
+    await renderMemoDetail();    // 게시물 데이터 렌더링
 
-        // 내 정보 보기 버튼 클릭
-        document.getElementById('mod_my_btn').addEventListener('click', () => {
-            window.location.href = '/my_info';
+    const likeButton = document.querySelector(".like-button");
+    const submitCommentButton = document.getElementById("submit-comment");
+    const commentBox = document.getElementById("comment-box");
+    const commentText = document.getElementById("comment-text");
+    const likeCountSpan = document.getElementById("like-count");
+    const viewCountSpan = document.getElementById("view-count");
+    const commentCountSpan = document.getElementById("comment-count");
+    const editButton = document.getElementById("edit-memo");
+    const deleteButton = document.getElementById("delete-memo");
+
+    let hasLiked = false; // 좋아요 상태
+
+    // 게시물 데이터 로드 및 렌더링
+    await renderMemoDetail();
+
+    // 수정 버튼 클릭 이벤트
+    if (editButton) {
+        editButton.addEventListener("click", () => {
+            const { id } = getQueryParams();
+            window.location.href = `/mod_memo?id=${encodeURIComponent(id)}`;
         });
+    }
 
-        // 로그아웃 버튼 클릭
-        document.getElementById('log_out_btn').addEventListener('click', () => {
-            window.location.href = '/login';
-        });
-
-        document.addEventListener('DOMContentLoaded', async () => {
-            const editButton = document.getElementById('edit-memo');
-            const deleteButton = document.getElementById('delete-memo');
-            const likeButton = document.getElementById('like-button');
-            const submitCommentButton = document.getElementById('submit-comment');
-
-            // 게시물 데이터 로드 및 렌더링
-            await renderMemoDetail();
-
-            if (editButton) {
-                editButton.addEventListener('click', () => {
-                    const { id } = getQueryParams();
-                    window.location.href = `/mod_memo?id=${encodeURIComponent(id)}`;
-                });
-            }
-
-            if (deleteButton) {
-                deleteButton.addEventListener('click', async () => {
-                    const { id } = getQueryParams();
-
-                    if (!confirm('정말로 게시물을 삭제하시겠습니까?')) return;
-
-                    try {
-                        const response = await fetch('/delete_memo', {
-                            method: 'DELETE',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ id }),
-                        });
-
-                        if (response.ok) {
-                            alert('게시물이 삭제되었습니다.');
-                            window.location.href = '/memo_list';
-                        } else {
-                            const error = await response.json();
-                            alert(error.error || '게시물 삭제 실패');
-                        }
-                    } catch (err) {
-                        console.error('게시물 삭제 오류:', err);
-                    }
-                });
-            }
-
-            if (likeButton) {
-                likeButton.addEventListener('click', async () => {
-                    const { id } = getQueryParams();
-
-                    try {
-                        const response = await fetch('/like_memo', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ id }),
-                        });
-
-                        if (response.ok) {
-                            const { like } = await response.json();
-                            document.getElementById('like-count').textContent = `좋아요: ${like}`;
-                        } else {
-                            alert('좋아요 처리 실패');
-                        }
-                    } catch (err) {
-                        console.error('좋아요 처리 오류:', err);
-                    }
-                });
-            }
-
-            if (submitCommentButton) {
-                submitCommentButton.addEventListener('click', async () => {
-                    const commentText = document.getElementById('comment-text').value.trim();
-                    const { id } = getQueryParams();
-
-                    if (!commentText) {
-                        alert('댓글을 입력해주세요.');
-                        return;
-                    }
-
-                    try {
-                        const response = await fetch('/add_comment', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ memoId: id, text: commentText }),
-                        });
-
-                        if (response.ok) {
-                            const { comments } = await response.json();
-                            renderComments(comments);
-                            document.getElementById('comment-text').value = '';
-                        } else {
-                            alert('댓글 작성 실패');
-                        }
-                    } catch (err) {
-                        console.error('댓글 작성 오류:', err);
-                    }
-                });
-            }
-        });
-
-        async function renderMemoDetail() {
+    // 삭제 버튼 클릭 이벤트
+    if (deleteButton) {
+        deleteButton.addEventListener("click", async () => {
             const { id } = getQueryParams();
 
+            if (!confirm("정말로 게시물을 삭제하시겠습니까?")) return;
+
             try {
-                const response = await fetch(`/api/look_memo?id=${encodeURIComponent(id)}`);
-                if (!response.ok) throw new Error('게시물 로딩 실패');
-                const memo = await response.json();
-                const currentUser = await fetch('/api/check_session')
-                    .then(res => res.json())
-                    .catch(() => ({ user: null }));
-                document.getElementById('post-title').textContent = memo.title || '제목 없음';
-                document.getElementById('username').textContent = memo.username || '익명';
-                document.getElementById('time').textContent = memo.time || '0000-00-00 00:00:00';
-                document.getElementById('context').textContent = memo.context || '내용 없음';
+                const response = await fetch("/delete_memo", {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id }),
+                });
 
-                const imgElement = document.getElementById('memo-img');
-                if (memo.img) imgElement.src = memo.img;
-                else document.getElementById('image-container').style.display = 'none';
-
-                document.getElementById('like-count').textContent = `좋아요: ${memo.like || 0}`;
-                document.getElementById('view-count').textContent = `조회수: ${memo.view || 0}`;
-                if (currentUser.user?.nickname !== memo.username) {
-                    document.getElementById('edit-memo').style.display = 'none';
-                    document.getElementById('delete-memo').style.display = 'none';
+                if (response.ok) {
+                    alert("게시물이 삭제되었습니다.");
+                    window.location.href = "/memo_list";
+                } else {
+                    const error = await response.json();
+                    alert(error.error || "게시물 삭제 실패");
                 }
-                fetchComments(id);
             } catch (err) {
-                console.error('게시물 렌더링 실패:', err);
-                alert('게시물을 불러오지 못했습니다.');
+                console.error("게시물 삭제 오류:", err);
             }
-        }
+        });
+    }
 
-        async function fetchComments(id) {
-            try {
-                const response = await fetch(`/api/comments?memoId=${id}`);
-                const { comments } = await response.json();
-                renderComments(comments || []);
-            } catch (err) {
-                console.error('댓글 로딩 오류:', err);
+    // 좋아요 버튼 클릭 이벤트
+    document.querySelector(".like-button").addEventListener("click", async () => {
+        const { id } = getQueryParams(); // URL에서 게시물 ID 가져오기
+
+        try {
+            const response = await fetch("/like_memo", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id }),
+            });
+
+            if (response.ok) {
+            const { like, hasLiked } = await response.json();
+            document.getElementById("like-count").textContent = like; // 좋아요 수 업데이트
+            likeButton.classList.toggle("liked", hasLiked);
+        } else {
+            const error = await response.json();
+            alert(error.error || "좋아요 처리 실패");
             }
+        } catch (err) {
+            console.error("좋아요 처리 중 오류:", err);
         }
+        });
 
-        async function renderComments(comments) {
-            const commentBox = document.getElementById('comment-box');
-            commentBox.innerHTML = '';
 
-            if (!comments.length) {
-                commentBox.innerHTML = '<p>댓글이 없습니다.</p>';
+    // 댓글 작성 버튼 클릭 이벤트
+    if (submitCommentButton) {
+        submitCommentButton.addEventListener("click", async () => {
+            const commentTextValue = commentText.value.trim();
+            const { id } = getQueryParams();
+
+            if (!commentTextValue) {
+                alert("댓글을 입력해주세요.");
                 return;
             }
 
-            const currentUser = await fetch('/api/check_session')
-                .then(res => res.json())
+            try {
+                const response = await fetch("/add_comment", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ memoId: id, text: commentTextValue }),
+                });
+
+                if (response.ok) {
+                    const { comments } = await response.json();
+                    renderComments(comments);
+                    commentText.value = ""; // 입력 필드 초기화
+                } else {
+                    alert("댓글 작성 실패");
+                }
+            } catch (err) {
+                console.error("댓글 작성 오류:", err);
+            }
+        });
+    }
+
+    // 게시물 상세 데이터를 렌더링
+    async function renderMemoDetail() {
+        const { id } = getQueryParams();
+
+        try {
+            const response = await fetch(`/api/look_memo?id=${encodeURIComponent(id)}`);
+            if (!response.ok) throw new Error("게시물 로딩 실패");
+
+            const memo = await response.json();
+            const currentUser = await fetch("/api/check_session")
+                .then((res) => res.json())
                 .catch(() => ({ user: null }));
 
-            comments.forEach(comment => {
-                const div = document.createElement('div');
-                div.classList.add('comment');
-                div.innerHTML = `
-                    <p><strong>${comment.username}</strong>: ${comment.text}</p>
-                    <small>${new Date(comment.createdAt).toLocaleString()}</small>
-                    <button class="delete-comment" data-id="${comment.id}">삭제</button>
-                `;
-                commentBox.appendChild(div);
-            });
+            document.getElementById("post-title").textContent = memo.title || "제목 없음";
+            document.getElementById("username").textContent = memo.username || "익명";
+            document.getElementById("time").textContent = memo.time || "0000-00-00 00:00:00";
+            document.getElementById("context").textContent = memo.context || "내용 없음";
+            
+            const imgElement = document.getElementById("memo-img");
+            if (memo.img) imgElement.src = memo.img;
+            else document.getElementById("image-container").style.display = "none";
 
-            document.querySelectorAll('.delete-comment').forEach(btn => {
-                btn.addEventListener('click', async e => {
-                    const { id: memoId } = getQueryParams();
-                    const commentId = e.target.dataset.id;
+            document.getElementById("like-count").textContent = memo.like || 0;
+            document.getElementById("view-count").textContent = memo.view || 0;
+            document.getElementById("comment-count").textContent = memo.comments || 0;
 
-                    try {
-                        const response = await fetch('/delete_comment', {
-                            method: 'DELETE',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ commentId, memoId }),
-                        });
+            // 작성자가 아닌 경우 수정/삭제 버튼 숨김
+            if (currentUser.user?.nickname !== memo.username) {
+                editButton.style.display = "none";
+                deleteButton.style.display = "none";
+            }
+            const likeButton = document.querySelector(".like-button");
+            if (memo.hasLiked) {
+                likeButton.classList.add("liked"); // 좋아요 표시
+            } else {
+                likeButton.classList.remove("liked");
+            }
 
-                        if (response.ok) {
-                            const { comments } = await response.json();
-                            renderComments(comments);
-                        } else {
-                            alert('댓글 삭제 실패');
-                        }
-                    } catch (err) {
-                        console.error('댓글 삭제 오류:', err);
-                    }
+            renderComments(memo.comments || []);
+        } catch (err) {
+            console.error("게시물 렌더링 실패:", err);
+            alert("게시물을 불러오지 못했습니다.");
+        }
+    }
+
+    async function increaseViewCount(id) {
+        try {
+            await fetch(`/increase_view?id=${encodeURIComponent(id)}`);
+        } catch (err) {
+            console.error("조회수 증가 실패:", err);
+        }
+    }
+
+    // 호출
+    document.addEventListener("DOMContentLoaded", async () => {
+        const { id } = getQueryParams();
+        increaseViewCount(id); // 조회수 증가
+        await renderMemoDetail();
+    });
+
+
+    // 댓글 데이터를 렌더링
+    async function renderComments(comments) {
+        const commentBox = document.getElementById("comment-box");
+        commentBox.innerHTML = ""; // 기존 댓글 초기화
+
+        if (comments.length === 0) {
+            commentBox.innerHTML = "<p>댓글이 없습니다.</p>";
+            return;
+        }
+
+        comments.forEach((comment) => {
+            const commentDiv = document.createElement("div");
+            commentDiv.classList.add("comment");
+            commentDiv.innerHTML = `
+                <p><strong>${comment.username}</strong>: ${comment.text}</p>
+                <small>${new Date(comment.createdAt).toLocaleString()}</small>
+            `;
+            commentBox.appendChild(commentDiv); // 수정된 부분
+        });
+    
+
+        // 댓글 수정 버튼 핸들러 등록
+        document.querySelectorAll(".edit-comment").forEach((btn) => {
+            btn.addEventListener("click", handleEditComment);
+        });
+
+        // 댓글 삭제 버튼 핸들러 등록
+        document.querySelectorAll(".delete-comment").forEach((btn) => {
+            btn.addEventListener("click", handleDeleteComment);
+        });
+    }
+    if (memo.hasLiked) {
+        likeButton.classList.add("liked");
+    } else {
+        likeButton.classList.remove("liked");
+    }
+
+
+    // 댓글 수정 핸들러
+    async function handleEditComment(event) {
+        const commentId = event.target.dataset.id;
+        const oldText = event.target.dataset.text;
+
+        commentText.value = oldText; // 기존 텍스트를 입력 필드에 삽입
+        commentText.focus();
+
+        submitCommentButton.textContent = "수정 완료"; // 버튼 텍스트 변경
+        submitCommentButton.onclick = async () => {
+            const newText = commentText.value.trim();
+            if (!newText) {
+                alert("댓글 내용을 입력해주세요.");
+                return;
+            }
+
+            try {
+                const response = await fetch("/edit_comment", {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ commentId, text: newText }),
                 });
-            });
-        }
 
-        function getQueryParams() {
-            const params = new URLSearchParams(window.location.search);
-            return { id: params.get('id') };
+                if (response.ok) {
+                    const { comments } = await response.json();
+                    renderComments(comments);
+                    submitCommentButton.textContent = "댓글 작성"; // 버튼 텍스트 복원
+                    commentText.value = ""; // 입력 필드 초기화
+                } else {
+                    alert("댓글 수정 실패");
+                }
+            } catch (err) {
+                console.error("댓글 수정 오류:", err);
+            }
+        };
+    }
+
+    // 댓글 삭제 핸들러
+    async function handleDeleteComment(event) {
+        const commentId = event.target.dataset.id;
+        const { id: memoId } = getQueryParams();
+
+        try {
+            const response = await fetch("/delete_comment", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ commentId, memoId }),
+            });
+
+            if (response.ok) {
+                const { comments } = await response.json();
+                renderComments(comments);
+            } else {
+                alert("댓글 삭제 실패");
+            }
+        } catch (err) {
+            console.error("댓글 삭제 오류:", err);
         }
+    }
+
+    // URL 파라미터 추출
+    function getQueryParams() {
+        const params = new URLSearchParams(window.location.search);
+        return { id: params.get("id") };
+    }
+});
+
     </script>
 </body>
 </html>

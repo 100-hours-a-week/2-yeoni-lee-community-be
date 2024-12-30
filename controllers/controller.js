@@ -59,7 +59,16 @@ const look_selected_memo = async (req, res) => {
   }
 
   try {
-    const memo = await Memo.findOne({ where: { id }, include: [Comment] });
+    const memo = await Memo.findOne({
+      where: { id },
+      include: [
+        {
+          model: Comment,
+          attributes: ['id', 'text', 'username', 'createdAt'],
+          order: [['createdAt', 'DESC']], // 최신 댓글 먼저
+        },
+      ],
+    });
 
     if (!memo) {
       return res.status(404).json({ error: '게시물을 찾을 수 없습니다.' });
