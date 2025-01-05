@@ -96,6 +96,7 @@ router.patch('/edit_comment', isAuthenticated, updateComment);
 
 
 
+
 //////////7. 내 정보 보기////////
 // 페이지 서빙
 router.get('/api/my_info', isAuthenticated, my_info);
@@ -118,8 +119,10 @@ router.patch('/mod_pw', updatePw);
 router.delete('/delete_user', isAuthenticated, delete_user);
 
 router.post('/like_memo', isAuthenticated, likeMemo);
-router.post('/increase_view', increaseViewCount);
 
+/////조회수 /////
+router.post('/increase_view', increaseViewCount);
+router.get('/increase_view', increaseViewCount);
 ////////게시물 삭제 /delete_memo //////
 router.delete('/delete_memo', isAuthenticated, delete_memo);
 

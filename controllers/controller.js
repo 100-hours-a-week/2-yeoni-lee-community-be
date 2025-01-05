@@ -73,9 +73,13 @@ const look_selected_memo = async (req, res) => {
     if (!memo) {
       return res.status(404).json({ error: '게시물을 찾을 수 없습니다.' });
     }
+//댓글 수 계산
+    const commentCount = memo.Comments ? memo.Comments.length : 0;
 
     const formattedMemo = {
       ...memo.toJSON(), // Sequelize 모델을 JSON 객체로 변환
+      comments: memo.Comments || [], // 댓글 데이터 포함
+      commentCount,
       time: dayjs(memo.time).format('YYYY-MM-DD HH:mm:ss'), // 포맷 적용
     };
 

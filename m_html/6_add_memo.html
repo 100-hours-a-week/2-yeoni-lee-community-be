@@ -21,9 +21,9 @@
         </div>
         <article class="payload">
             <form id="memo-form" method="POST" action="/add_memo" enctype="multipart/form-data">
-                <p class="description">제목*</p>
+                <p class="description">제목* (최대 26자)</p>
                 <hr class="horizontal-rule"/>
-                <input type="string" id="title" name="title" required>
+                <input type="text" id="title" name="title" maxlength="26" required>
                 <hr class="horizontal-rule"/>
                 <p class="description">내용*</p>
                 <hr class="horizontal-rule"/>

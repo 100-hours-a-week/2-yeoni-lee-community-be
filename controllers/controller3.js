@@ -24,6 +24,8 @@ const addComment = async (req, res) => {
       text,
     });
 
+    await Memo.increment('comments', { where: { id: memoId } });
+
     // 해당 게시물의 전체 댓글 가져오기
     const comments = await Comment.findAll({
       where: { memoId: memoId },
@@ -130,6 +132,8 @@ const deleteComment = async (req, res) => {
     // 댓글 삭제
     await comment.destroy();
 
+    await Memo.decrement('comments', { where: { id: memoId } });
+
     // 최신 댓글 목록 반환 (최신 댓글 순서)
     const comments = await Comment.findAll({
       where: { memoId },
@@ -213,8 +217,9 @@ const increaseViewCount = async (req, res) => {
           return res.status(404).json({ error: '게시물을 찾을 수 없습니다.' });
       }
 
-      await memo.increment('view');
-      res.status(200).json({ view: memo.view + 1 }); // 업데이트된 조회수 반환
+      await memo.increment('view'); //조회수 증가
+      const updatedMemo = await Memo.findByPk(id);
+      res.status(200).json({ view: updatedMemo.view}); // 업데이트된 조회수 반환
   } catch (err) {
       console.error('조회수 증가 중 오류 발생:', err);
       res.status(500).json({ error: '조회수 증가에 실패했습니다.' });
