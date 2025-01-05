@@ -16,4 +16,4 @@ EXPOSE 8080
 
 # 기본 명령 실행
 CMD ["node", "app.js"]
- 
+ #
