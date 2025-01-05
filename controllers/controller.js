@@ -87,7 +87,7 @@ const look_selected_memo = async (req, res) => {
   }
 };
 
-// Sequelize Memo 모델
+// Sequelize Memo 모델 주석추가
 
 // 게시물 수정 데이터 로드 및 작성자 확인
 const getMemoForEdit = async (req, res) => {
