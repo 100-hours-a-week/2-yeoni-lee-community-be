@@ -51,7 +51,7 @@ const loginUser = async (req, res) => {
       nickname: user.nickname,
     };
 
-    res.redirect('/memo_list');
+    res.redirect('/api/memo_list');
   } catch (err) {
     console.error('로그인 처리 중 오류 발생:', err);
     res.status(500).json({ error: '로그인 처리에 실패했습니다.' });

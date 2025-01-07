@@ -6,13 +6,25 @@ import cookieParser from 'cookie-parser'; // 쿠키
 import sequelize from './models/db.js'; // DB 설정 파일 import
 import userRoutes from './routes/route.js'; // 메인 라우터
 import sessionRouter from './routes/session.js'; // 세션 확인 라우터
+import cors from 'cors';
+
 
 const app = express();
-const PORT = 8080;
+const PORT = 5000;
 
 // __dirname 설정
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+app.use(cors({
+  origin: 'http://localhost:3000', // 프론트엔드 도메인
+  credentials: true, // 쿠키 허용
+}));
+
+app.options('*', cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+}));
 
 // 미들웨어 설정
 app.use(cookieParser());
@@ -39,6 +51,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // 라우터 설정
 app.use('/', sessionRouter); // 세션 확인 라우터
 app.use('/', userRoutes); // 메인 라우터
+
 
 // 데이터베이스 동기화 후 서버 시작
 sequelize
