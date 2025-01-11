@@ -16,14 +16,15 @@ const PORT = 5000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+
 app.use(cors({
-  origin: 'http://localhost:3000', // 프론트엔드 도메인
-  credentials: true, // 쿠키 허용
+  origin: 'http://localhost:3000', // 허용할 Origin
+  credentials: true, // 쿠키를 포함한 요청 허용
 }));
 
 app.options('*', cors({
-  origin: 'http://localhost:3000',
-  credentials: true,
+  origin: 'http://localhost:3000', // 허용할 Origin
+  credentials: true, // 쿠키 포함
 }));
 
 // 미들웨어 설정
@@ -37,6 +38,7 @@ app.use(
       httpOnly: true, // JavaScript로 쿠키 접근 불가
       secure: false, // HTTPS에서만 사용 (개발 단계에서 false)
       maxAge: 1000 * 60 * 30, // 세션 유지 시간: 30분
+      sameSite: 'lax', // CORS 요청에서도 허용
     },
   })
 );

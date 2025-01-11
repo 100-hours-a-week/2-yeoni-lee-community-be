@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "memoId": 1,
+    "text": "첫 번째 댓글",
+    "username": "사용자2",
+    "createdAt": "2025-01-01 13:00:00"
+  },
+  {
+    "id": 2,
+    "memoId": 1,
+    "text": "댓글",
+    "username": "yoeni",
+    "createdAt": "2025-01-11T14:23:26.363Z"
+  }
+]

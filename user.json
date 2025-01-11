@@ -1,0 +1,20 @@
+[
+  {
+    "email": "user1@example.com",
+    "password": "password1",
+    "nickname": "닉네임1",
+    "img": "/profile/default.jpg"
+  },
+  {
+    "email": "a@gmail.com",
+    "password": "Aasdf1234*",
+    "nickname": "json",
+    "img": null
+  },
+  {
+    "email": "juyeon@gmail.com",
+    "password": "Aasdf1234*",
+    "nickname": "yoeni2",
+    "img": null
+  }
+]
