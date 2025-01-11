@@ -1,6 +1,7 @@
 import Memo from '../models/memo.js'; // Sequelize Memo 모델
 import Comment from '../models/Comment.js'; // Sequelize Comment 모델
 
+
 // 댓글 추가
 // 댓글 추가
 const addComment = async (req, res) => {

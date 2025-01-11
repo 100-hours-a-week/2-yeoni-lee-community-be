@@ -1,6 +1,7 @@
 import Memo from '../models/memo.js'; // Sequelize Memo 모델
 import Comment from '../models/Comment.js'; // Sequelize Comment 모델
 import dayjs from 'dayjs'; // 날짜 포맷팅 라이브러리
+import {API_BASE_URL} from '../app.js';
 
 // 메모 추가하기
 const addMemo = async (req, res) => {
@@ -22,7 +23,7 @@ const addMemo = async (req, res) => {
     };
 
     const newMemo = await Memo.create(memoData);
-    res.redirect('/memo_list');
+    res.redirect(`${API_BASE_URL}/3_memo_list`);
   } catch (err) {
     console.error('게시물 저장 중 오류 발생:', err);
     res.status(500).json({ error: '게시물을 저장하는 데 실패했습니다.' });

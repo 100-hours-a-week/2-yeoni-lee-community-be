@@ -40,6 +40,7 @@ router.post('/logout', (req, res) => {
 router.post('/signup', uploadProfile.single('img'), registerUser);
 ////////////6. 게시물 작성////////////
 router.post('/add_memo', isAuthenticated, uploadMemo.single('memo_img'), addMemo);
+
 ////////////3. 게시물 보기////////////
 router.get('/api/memo_list', getMemoList);
 

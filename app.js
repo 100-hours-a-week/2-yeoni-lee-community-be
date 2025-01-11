@@ -65,3 +65,5 @@ sequelize
   .catch((err) => {
     console.error('Failed to synchronize database:', err);
   });
+
+  export const API_BASE_URL = 'http://localhost:3000';

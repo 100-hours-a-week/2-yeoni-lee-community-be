@@ -3,6 +3,7 @@ import { Op } from 'sequelize'; // 추가
 import User from '../models/user.js';
 import Memo from '../models/memo.js'; // Memo 모델 추가
 import Comment from '../models/Comment.js'; // Comment 모델 추가
+import {API_BASE_URL} from '../app.js';
 
 const registerUser = async (req, res) => { //회원가입
   try {
@@ -30,7 +31,8 @@ const registerUser = async (req, res) => { //회원가입
         };
 
     await User.create(userData);
-    res.redirect('/successful_signup');
+    alert('회원가입 성공!');
+    res.redirect(`${API_BASE_URL}/2_login`);
   } catch (err) {
     console.error('회원 저장 중 오류 발생:', err);
     res.status(500).json({ error: '회원 데이터를 저장하는 데 실패했습니다.' });
@@ -51,7 +53,7 @@ const loginUser = async (req, res) => {
       nickname: user.nickname,
     };
 
-    res.redirect('/api/memo_list');
+    res.redirect('api/memo_list');
   } catch (err) {
     console.error('로그인 처리 중 오류 발생:', err);
     res.status(500).json({ error: '로그인 처리에 실패했습니다.' });
@@ -90,7 +92,10 @@ const updatePw = async (req, res) => {
     }
 
     await user.update({ password });
-    res.status(200).json({ message: '비밀번호가 성공적으로 수정되었습니다.' });
+    res.status(200).json({ 
+      message: '비밀번호가 성공적으로 수정되었습니다.', redirectUrl: `${API_BASE_URL}/2_login`
+    });
+
   } catch (err) {
     console.error('비밀번호 수정 중 오류 발생:', err);
     res.status(500).json({ error: '비밀번호를 수정하는 데 실패했습니다.' });
@@ -124,7 +129,7 @@ const look_my_info = async (req, res) => {
     res.status(200).json({
       message: '정보 수정 성공',
       nickname: user.nickname,
-      img: img ? `/profile/${img}` : `/profile/${user.img}`,
+      img: img ? `/profile/${img}` : user.img,
     });
   } catch (err) {
     console.error('정보 수정 중 오류 발생:', err);
@@ -145,7 +150,8 @@ const delete_user = async (req, res) => {
     await user.destroy();
     req.session.destroy(err => {
       if (err) {
-        return res.status(500).send('세션 종료 중 오류 발생');
+        console.error('세션 종료 중 오류 발생:', err);
+        return res.status(500).json({ error: '회원 탈퇴 처리 중 오류가 발생했습니다.' });
       }
       res.status(200).json({ message: '회원 탈퇴가 완료되었습니다.' });
     });
@@ -154,5 +160,8 @@ const delete_user = async (req, res) => {
     res.status(500).json({ error: '회원 탈퇴에 실패했습니다.' });
   }
 }
+
+
+
 
 export { registerUser, loginUser, my_info, updatePw, look_my_info, delete_user };
