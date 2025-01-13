@@ -3,7 +3,7 @@ import path from 'path';
 import dayjs from 'dayjs';
 
 const MEMO_FILE = path.resolve('./memo.json');
-
+//res.redirect
 // JSON 파일 읽기
 const readMemos = async () => {
   const data = await fs.readFile(MEMO_FILE, 'utf-8');
@@ -14,6 +14,8 @@ const readMemos = async () => {
 const writeMemos = async (data) => {
   await fs.writeFile(MEMO_FILE, JSON.stringify(data, null, 2), 'utf-8');
 };
+
+import {API_BASE_URL} from '../app.js';
 
 // 메모 추가하기
 const addMemo = async (req, res) => {
@@ -39,7 +41,7 @@ const addMemo = async (req, res) => {
     memos.push(newMemo);
     await writeMemos(memos);
 
-    res.status(201).json({ message: '메모가 추가되었습니다.', memo: newMemo });
+    res.json({ redirectUrl: `${API_BASE_URL}/3_memo_list` });
   } catch (err) {
     console.error('메모 추가 중 오류:', err);
     res.status(500).json({ error: '메모를 추가하는 데 실패했습니다.' });

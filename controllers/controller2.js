@@ -4,8 +4,8 @@ import fs from 'fs/promises';
 import path from 'path';
 
 const USER_FILE = path.resolve('./user.json');
-const MEMO_FILE = path.resolve('./memo.json');
-const COMMENT_FILE = path.resolve('./comment.json');
+//const MEMO_FILE = path.resolve('./memo.json');
+//const COMMENT_FILE = path.resolve('./comment.json');
 import {API_BASE_URL} from '../app.js';
 
 // JSON 파일 읽기
@@ -22,7 +22,7 @@ const writeUsers = async (data) => {
 // 회원가입
 const registerUser = async (req, res) => {
   try {
-    const { email, password, nickname } = req.body;
+    const { email, password, nickname, } = req.body;
     const users = await readUsers();
 
     // 중복 확인
@@ -35,7 +35,7 @@ const registerUser = async (req, res) => {
 
     // 공백 검증
     if (!email.trim() || !nickname.trim()) {
-      return res.status(400).json({ error: '이메일과 닉네임을 입력해주세요.' });
+      return res.status(403).json({ error: '이메일과 닉네임을 입력해주세요.' });
     }
 
     const file = req.file;
@@ -49,7 +49,8 @@ const registerUser = async (req, res) => {
     users.push(newUser);
     await writeUsers(users);
 
-    res.redirect(`${API_BASE_URL}/2_login`);
+    res.json({ redirectUrl: `${API_BASE_URL}/2_login` });
+    //res.redirect(`${API_BASE_URL}/2_login`);
   } catch (err) {
     console.error('회원 저장 중 오류 발생:', err);
     res.status(500).json({ error: '회원 데이터를 저장하는 데 실패했습니다.' });
@@ -64,7 +65,7 @@ const loginUser = async (req, res) => {
 
     const user = users.find((u) => u.email === email && u.password === password);
     if (!user) {
-      return res.status(401).send('이메일 또는 비밀번호가 잘못되었습니다.');
+      return res.status(401).json({ error: '이메일 또는 비밀번호가 잘못되었습니다.' });
     }
 
     req.session.user = {
@@ -72,7 +73,9 @@ const loginUser = async (req, res) => {
       nickname: user.nickname,
     };
 
-    res.redirect(`${API_BASE_URL}/3_memo_list`);
+    res.json({ redirectUrl: `${API_BASE_URL}/3_memo_list` });
+
+    //res.redirect(`${API_BASE_URL}/3_memo_list`); // -> 얘가 범인
   } catch (err) {
     console.error('로그인 처리 중 오류 발생:', err);
     res.status(500).json({ error: '로그인 처리에 실패했습니다.' });

@@ -8,8 +8,26 @@ import userRoutes from './routes/route.js'; // 메인 라우터
 import sessionRouter from './routes/session.js'; // 세션 확인 라우터
 import cors from 'cors';
 
-
 const app = express();
+
+app.options('*', cors({
+  origin: 'http://localhost:3000', // 허용할 Origin
+  credentials: true, // 쿠키 포함
+}));
+app.use(cors({
+  origin: 'http://localhost:3000', // 허용할 Origin
+  credentials: true, // 쿠키를 포함한 요청 허용
+}));
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
+
+
 const PORT = 5000;
 
 // __dirname 설정
@@ -17,15 +35,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 
-app.use(cors({
-  origin: 'http://localhost:3000', // 허용할 Origin
-  credentials: true, // 쿠키를 포함한 요청 허용
-}));
-
-app.options('*', cors({
-  origin: 'http://localhost:3000', // 허용할 Origin
-  credentials: true, // 쿠키 포함
-}));
 
 // 미들웨어 설정
 app.use(cookieParser());
