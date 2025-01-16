@@ -6,7 +6,7 @@
     "username": "사용자1",
     "time": "2025-01-01 12:00:00",
     "like": 10,
-    "view": 127,
+    "view": 131,
     "comments": 7
   },
   {
@@ -61,7 +61,7 @@
     "context": "asdfasdf",
     "img": "/uploads/5550b4a6bb3c1b46375c74bd8d7f75ef",
     "like": 0,
-    "view": 14,
+    "view": 30,
     "comments": 0
   },
   {
@@ -78,12 +78,34 @@
   {
     "id": 8,
     "username": "wndus",
-    "time": "2025-01-14 16:06:39",
-    "title": "게시물 작성 ",
-    "context": "게시물 작성 ",
-    "img": "/uploads/79ba16d5dcbd43eb396d6de18f160efb",
+    "time": "2025-01-16 10:57:14",
+    "title": "ㅁㄴㅇㄹ",
+    "context": "ㅁㄴㅇㄹ",
+    "img": null,
     "like": 0,
     "view": 0,
+    "comments": []
+  },
+  {
+    "id": 9,
+    "username": "wndus",
+    "time": "2025-01-16 11:37:44",
+    "title": "ㅅㄷㄴㅅ",
+    "context": "ㅅㄷㄴㅅ",
+    "img": null,
+    "like": 0,
+    "view": 4,
+    "comments": []
+  },
+  {
+    "id": 10,
+    "username": "wndus",
+    "time": "2025-01-16 11:38:45",
+    "title": "ㅅㄷㄴㅅ",
+    "context": "ㅅㄷㄴㅅㅅㄷㄴㅅ",
+    "img": "/uploads/default-memo.jpeg",
+    "like": 0,
+    "view": 4,
     "comments": []
   }
 ]

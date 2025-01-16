@@ -33,7 +33,7 @@ const addMemo = async (req, res) => {
       time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
       title: req.body.title,
       context: req.body.context,
-      img: file ? `/uploads/${file.filename}` : null,
+      img: file ? `/uploads/${file.filename}` : `/uploads/default-memo.jpeg`,
       like: 0,
       view: 0,
       comments: []
@@ -41,7 +41,7 @@ const addMemo = async (req, res) => {
 
     memos.push(newMemo);
     await writeMemos(memos);
-
+    
     res.json({ redirectUrl: `${API_BASE_URL}/3_memo_list` });
   } catch (err) {
     console.error('메모 추가 중 오류:', err);
