@@ -26,5 +26,12 @@
     "text": "댓글 아깐 달렸잖아요",
     "username": "yoeni2",
     "createdAt": "2025-01-11T14:35:45.729Z"
+  },
+  {
+    "id": 5,
+    "memoId": 1,
+    "text": "댓글1",
+    "username": "yoeni2",
+    "createdAt": "2025-01-13T07:49:19.364Z"
   }
 ]

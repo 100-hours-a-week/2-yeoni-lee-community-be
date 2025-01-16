@@ -1,3 +1,4 @@
+//controller.js
 import fs from 'fs/promises';
 import path from 'path';
 import dayjs from 'dayjs';
@@ -181,10 +182,8 @@ export { addMemo, getMemoList, look_selected_memo, updateMemo, delete_memo, getM
 
 
 
-//--------------건드리지 말 것 ---------------------------------------------
-//--------------건드리지 말 것 ---------------------------------------------
-//--------------건드리지 말 것 ---------------------------------------------
-//--------------건드리지 말 것 ---------------------------------------------
+//------------미안해요 제프 미련이라고 생각해주세요-------------------------------
+//------------미안해요 제프 미련이라고 생각해주세요-------------------------------
 /*import Memo from '../models/memo.js'; // Sequelize Memo 모델
 import Comment from '../models/Comment.js'; // Sequelize Comment 모델
 import dayjs from 'dayjs'; // 날짜 포맷팅 라이브러리

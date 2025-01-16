@@ -1,3 +1,4 @@
+//comment.js
 import { DataTypes } from 'sequelize';
 import sequelize from './db.js'; // Sequelize 인스턴스
 import Memo from './memo.js'; // Memo 모델

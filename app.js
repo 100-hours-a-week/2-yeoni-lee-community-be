@@ -3,7 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import session from 'express-session'; // 세션
 import cookieParser from 'cookie-parser'; // 쿠키
-import sequelize from './models/db.js'; // DB 설정 파일 import
+import sequelize from './trashcan/db.js'; // DB 설정 파일 import
 import userRoutes from './routes/route.js'; // 메인 라우터
 import sessionRouter from './routes/session.js'; // 세션 확인 라우터
 import cors from 'cors';

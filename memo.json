@@ -6,8 +6,8 @@
     "username": "사용자1",
     "time": "2025-01-01 12:00:00",
     "like": 10,
-    "view": 105,
-    "comments": 6
+    "view": 127,
+    "comments": 7
   },
   {
     "id": 2,
@@ -63,5 +63,27 @@
     "like": 0,
     "view": 14,
     "comments": 0
+  },
+  {
+    "id": 7,
+    "username": "wndus",
+    "time": "2025-01-14 16:06:33",
+    "title": "게시물 작성 ",
+    "context": "게시물 작성 ",
+    "img": "/uploads/bdeafd69399197efb4e56688e4bd1020",
+    "like": 0,
+    "view": 0,
+    "comments": []
+  },
+  {
+    "id": 8,
+    "username": "wndus",
+    "time": "2025-01-14 16:06:39",
+    "title": "게시물 작성 ",
+    "context": "게시물 작성 ",
+    "img": "/uploads/79ba16d5dcbd43eb396d6de18f160efb",
+    "like": 0,
+    "view": 0,
+    "comments": []
   }
 ]

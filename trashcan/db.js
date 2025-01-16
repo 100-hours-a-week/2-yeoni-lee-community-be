@@ -1,3 +1,4 @@
+//db.js
 import { Sequelize } from 'sequelize';
 
 const sequelize = new Sequelize('database-1', 'admin', 'duswndl2871', {
