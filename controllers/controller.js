@@ -4,10 +4,15 @@ import path from 'path';
 import dayjs from 'dayjs';
 
 const MEMO_FILE = path.resolve('./memo.json');
-//res.redirect
+const COMMENT_FILE = path.resolve('./comment.json');
 // JSON 파일 읽기
 const readMemos = async () => {
   const data = await fs.readFile(MEMO_FILE, 'utf-8');
+  return JSON.parse(data);
+};
+
+const readJSON = async (file) => {
+  const data = await fs.readFile(COMMENT_FILE, 'utf-8');
   return JSON.parse(data);
 };
 
@@ -73,16 +78,23 @@ const look_selected_memo = async (req, res) => {
 
   try {
     const memos = await readMemos();
+    const comments = await readJSON(COMMENT_FILE);
+
     const memo = memos.find((m) => m.id === Number(id));
 
     if (!memo) {
       return res.status(404).json({ error: '게시물을 찾을 수 없습니다.' });
     }
 
+    const filteredComments = comments.filter((c) => c.memoId === Number(id));
+
     memo.view += 1; // 조회수 증가
     await writeMemos(memos);
 
-    res.status(200).json(memo);
+    res.status(200).json({
+      memo,
+      comments: filteredComments,
+    });
   } catch (err) {
     console.error('메모 상세 조회 중 오류:', err);
     res.status(500).json({ error: '메모 데이터를 가져오는 데 실패했습니다.' });

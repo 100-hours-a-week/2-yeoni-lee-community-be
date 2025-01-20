@@ -71,6 +71,7 @@ const loginUser = async (req, res) => {
     req.session.user = {
       email: user.email,
       nickname: user.nickname,
+      img : user.img,
     };
 
     res.json({ redirectUrl: `${API_BASE_URL}/3_memo_list` });

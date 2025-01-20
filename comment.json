@@ -1,37 +1,30 @@
 [
   {
     "id": 1,
-    "memoId": 1,
-    "text": "첫 번째 댓글",
-    "username": "사용자2",
-    "createdAt": "2025-01-01 13:00:00"
+    "memoId": 2,
+    "text": "댓글1",
+    "username": "wndus",
+    "createdAt": "2025-01-16T08:19:24.354Z"
   },
   {
     "id": 2,
-    "memoId": 1,
-    "text": "댓글",
-    "username": "yoeni",
-    "createdAt": "2025-01-11T14:23:26.363Z"
+    "memoId": 2,
+    "text": "댓글2",
+    "username": "wndus",
+    "createdAt": "2025-01-16T08:21:48.923Z"
   },
   {
     "id": 3,
-    "memoId": 2,
-    "text": "댓글1",
-    "username": "yoeni2",
-    "createdAt": "2025-01-11T14:33:21.143Z"
+    "memoId": 1,
+    "text": "댓글",
+    "username": "wndus",
+    "createdAt": "2025-01-16T08:21:59.929Z"
   },
   {
     "id": 4,
-    "memoId": 2,
-    "text": "댓글 아깐 달렸잖아요",
-    "username": "yoeni2",
-    "createdAt": "2025-01-11T14:35:45.729Z"
-  },
-  {
-    "id": 5,
     "memoId": 1,
-    "text": "댓글1",
-    "username": "yoeni2",
-    "createdAt": "2025-01-13T07:49:19.364Z"
+    "text": "댓글댓글",
+    "username": "wndus",
+    "createdAt": "2025-01-16T08:22:04.979Z"
   }
 ]

@@ -48,11 +48,12 @@ const addComment = async (req, res) => {
     comments.push(newComment);
     await writeJSON(COMMENT_FILE, comments);
 
-    memo.comments++;
+    // 메모의 댓글 수 업데이트
+    memo.comments = comments.filter((c) => c.memoId === Number(memoId)).length;
     await writeJSON(MEMO_FILE, memos);
-
-    const updatedComments = comments.filter((c) => c.memoId === Number(memoId));
-    res.status(201).json({ message: '댓글이 성공적으로 추가되었습니다.', comments: updatedComments });
+    // 해당 메모의 댓글만 반환
+    const filteredComments = comments.filter((c) => c.memoId === Number(memoId));
+    res.status(201).json({ message: '댓글이 성공적으로 추가되었습니다.', comments: filteredComments });
   } catch (err) {
     console.error('댓글 작성 중 오류 발생:', err);
     res.status(500).json({ error: '댓글 작성에 실패했습니다.' });
@@ -70,6 +71,7 @@ const getComments = async (req, res) => {
 
     const comments = await readJSON(COMMENT_FILE);
     const filteredComments = comments.filter((c) => c.memoId === Number(memoId));
+
     res.status(200).json({ comments: filteredComments });
   } catch (err) {
     console.error('댓글 가져오기 중 오류 발생:', err);
@@ -115,26 +117,27 @@ const deleteComment = async (req, res) => {
 
     const comments = await readJSON(COMMENT_FILE);
     const memos = await readJSON(MEMO_FILE);
-
+// 삭제할 댓글 찾기
     const comment = comments.find((c) => c.id === Number(commentId));
     if (!comment) {
       return res.status(404).json({ error: '댓글을 찾을 수 없습니다.' });
     }
-
+// 권한 확인
     if (comment.username !== req.session.user.nickname) {
       return res.status(403).json({ error: '삭제 권한이 없습니다.' });
     }
-
+// 댓글 삭제
     const updatedComments = comments.filter((c) => c.id !== Number(commentId));
     await writeJSON(COMMENT_FILE, updatedComments);
-
+ // 메모의 댓글 수 업데이트
     const memo = memos.find((m) => m.id === Number(memoId));
     if (memo) {
-      memo.comments--;
+      memo.comments = updatedComments.filter((c) => c.memoId === Number(memoId)).length;
       await writeJSON(MEMO_FILE, memos);
     }
-
-    res.status(200).json({ message: '댓글이 성공적으로 삭제되었습니다.', comments: updatedComments });
+ // 해당 메모의 댓글만 반환
+    const filteredComments = updatedComments.filter((c) => c.memoId === Number(memoId));
+    res.status(200).json({ message: '댓글이 성공적으로 삭제되었습니다.', comments: filteredComments });
   } catch (err) {
     console.error('댓글 삭제 중 오류 발생:', err);
     res.status(500).json({ error: '댓글 삭제에 실패했습니다.' });
@@ -180,6 +183,14 @@ const increaseViewCount = async (req, res) => {
 
     const memos = await readJSON(MEMO_FILE);
     const memo = memos.find((m) => m.id === Number(id));
+
+    if (!req.session.viewedMemos) {
+      req.session.viewedMemos = new Set(); // 이미 본 메모 ID 저장
+    }
+
+    if (req.session.viewedMemos.has(Number(id))) {
+      return res.status(200).json({ message: "조회수 이미 증가됨" });
+    }
 
     if (!memo) {
       return res.status(404).json({ error: '게시물을 찾을 수 없습니다.' });
