@@ -3,7 +3,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import session from 'express-session'; // 세션
 import cookieParser from 'cookie-parser'; // 쿠키
-import sequelize from './trashcan/db.js'; // DB 설정 파일 import
+//import sequelize from './db.js'; // DB 설정 파일 import
+import pool from './db.js';
 import userRoutes from './routes/route.js'; // 메인 라우터
 import sessionRouter from './routes/session.js'; // 세션 확인 라우터
 import cors from 'cors';
@@ -64,17 +65,29 @@ app.use('/', sessionRouter); // 세션 확인 라우터
 app.use('/', userRoutes); // 메인 라우터
 
 
-// 데이터베이스 동기화 후 서버 시작 이거 한번만 봐주시면 안되나요,, 지금 json 쓰고 있어서 어차피 안쓰는 코드긴 한데 지우면 오류가 나서 일단 남겨두고 이써요 ㅠㅠ //
-sequelize
-  .sync({ force: false }) // 데이터베이스와 테이블 동기화 (force: false -> 기존 데이터 유지)
-  .then(() => {
-    console.log('Database synchronized!');
-    app.listen(PORT, () => {
-      console.log(`Server is running at http://localhost:${PORT}`);
-    });
+
+app.listen(PORT, () => {
+  console.log(`✅ Server is running on http://localhost:${PORT}`);
+});
+
+  // MariaDB 연결 테스트 API
+app.get('/test-db', async (req, res) => {
+  try {
+    const [rows] = await pool.query('SELECT NOW() AS now'); // 현재 시간 가져오기
+    res.json({ success: true, serverTime: rows[0].now });
+  } catch (error) {
+    console.error('Database connection error:', error);
+    res.status(500).json({ success: false, message: 'DB 연결 실패' });
+  }
+});
+
+pool.getConnection()
+  .then(conn => {
+    console.log("✅ Database connected!");
+    conn.release();
   })
-  .catch((err) => {
-    console.error('Failed to synchronize database:', err);
+  .catch(err => {
+    console.error("🔥 [Error] Database connection failed:", err);
   });
 
   export const API_BASE_URL = 'http://localhost:3000';

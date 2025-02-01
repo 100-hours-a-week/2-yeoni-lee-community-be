@@ -7,7 +7,7 @@
     "context": "첫번째 게시물 작성 중입니다. ",
     "img": "/uploads/6788e05e1d31fa846b4337c8b4bab3d7",
     "like": 0,
-    "view": 35,
+    "view": 53,
     "comments": 2
   },
   {
@@ -18,7 +18,7 @@
     "context": "두 번째 게시물 작성 중입니다. ",
     "img": "/uploads/default-memo.jpeg",
     "like": 0,
-    "view": 13,
+    "view": 24,
     "comments": 2
   },
   {
@@ -29,7 +29,7 @@
     "context": "ㄴ게시물 수정",
     "img": "/uploads/d53ad6c2581efbd949ef3ca39a8039c7",
     "like": 0,
-    "view": 18,
+    "view": 25,
     "comments": []
   }
 ]
