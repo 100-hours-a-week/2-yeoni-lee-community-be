@@ -18,6 +18,8 @@ app.options('*', cors({
 app.use(cors({
   origin: 'http://3.34.42.154:3000', // 허용할 Origin
   credentials: true, // 쿠키를 포함한 요청 허용
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 app.use((req, res, next) => {
@@ -97,4 +99,4 @@ pool.getConnection()
     console.error("🔥 [Error] Database connection failed:", err);
   });
 
-  export const API_BASE_URL = 'http://3.34.42.154:3000';
+  export const API_BASE_URL = 'http://3.34.42.154:5000';
