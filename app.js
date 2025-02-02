@@ -99,4 +99,4 @@ pool.getConnection()
     console.error("🔥 [Error] Database connection failed:", err);
   });
 
-  export const API_BASE_URL = 'http://3.34.42.154:5000';
+  export const API_BASE_URL = 'http://3.34.42.154:3000';
