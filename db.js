@@ -14,13 +14,16 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
-pool.getConnection((err, connection) => {
-  if (err) {
-    console.error('❌ Database connection failed:', err);
-  } else {
+async function checkDBConnection() {
+  try {
+    const connection = await pool.getConnection();
     console.log('✅ Connected to MariaDB');
     connection.release();
+  } catch (err) {
+    console.error('❌ Database connection failed:', err);
   }
-});
+}
 
+// 실행
+checkDBConnection();
 export default pool; // ✅ export default 추가
