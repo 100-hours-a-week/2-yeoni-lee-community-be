@@ -12,18 +12,18 @@ import cors from 'cors';
 const app = express();
 
 app.options('*', cors({
-  origin: 'http://172.31.0.235:3000', // 허용할 Origin
+  origin: 'http://3.34.144.209:3000', // 허용할 Origin
   credentials: true, // 쿠키 포함
 }));
 app.use(cors({
-  origin: 'http://172.31.0.235:3000', // 허용할 Origin
+  origin: 'http://3.34.144.209:3000', // 허용할 Origin
   credentials: true, // 쿠키를 포함한 요청 허용
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://172.31.0.235:3000');
+  res.header('Access-Control-Allow-Origin', 'http://3.34.144.209:3000');
   res.header('Access-Control-Allow-Credentials', 'true');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -98,4 +98,4 @@ pool.getConnection((err, conn) => {
     conn.release();
   }
 });
-  export const API_BASE_URL = 'http://172.31.0.235:3000';
+  export const API_BASE_URL = 'http://3.34.144.209:3000';
