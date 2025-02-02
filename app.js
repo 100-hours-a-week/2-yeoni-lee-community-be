@@ -90,12 +90,13 @@ app.get('/test-db', async (req, res) => {
   }
 });
 
-pool.getConnection((err, conn) => {
-  if (err) {
-    console.error('❌ Database connection failed:', err);
-  } else {
+(async () => {
+  try {
+    const conn = await pool.getConnection();
     console.log('✅ Connected to MariaDB');
     conn.release();
+  } catch (err) {
+    console.error('❌ Database connection failed:', err);
   }
-});
+})();
   export const API_BASE_URL = 'http://3.34.144.209:3000';

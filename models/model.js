@@ -130,13 +130,15 @@ const updatePassword = async (email, newPassword) => {
 // 🔹 메모 관련 함수
 const getMemos = async () => {
   try {
+    console.log('📌 [DEBUG] /api/memo_list 실행됨'); // 디버깅 추가
     const [memos] = await pool.query('SELECT * FROM Memos ORDER BY createdAt DESC');
     return memos;
   } catch (err) {
-    console.error('메모 목록 조회 중 오류 발생:', err);
+    console.error('🔥 [Error] 메모 목록 조회 중 오류 발생:', err);
     return [];
   }
 };
+
 
 // ✅ 특정 메모 조회
 const getMemoById = async (id) => {
