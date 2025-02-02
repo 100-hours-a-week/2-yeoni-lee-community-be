@@ -1,8 +1,9 @@
-require('dotenv').config();
+import mysql from 'mysql2';
+import dotenv from 'dotenv';
 
-const mysql = require('mysql2');
+dotenv.config();
 
-const db = mysql.createPool({
+const pool = mysql.createPool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT || 3306,
   user: process.env.DB_USER,
@@ -13,13 +14,13 @@ const db = mysql.createPool({
   queueLimit: 0
 });
 
-db.getConnection((err, connection) => {
+pool.getConnection((err, connection) => {
   if (err) {
-    console.error('Database connection failed:', err);
+    console.error('❌ Database connection failed:', err);
   } else {
     console.log('✅ Connected to MariaDB');
     connection.release();
   }
 });
 
-module.exports = db;
+export default pool; // ✅ export default 추가
