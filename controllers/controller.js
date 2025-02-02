@@ -59,9 +59,14 @@ const look_selected_memo = async (req, res) => {
 
 const updateMemo = async (req, res) => {
   try {
+    console.log('세션 정보:', req.session.user); // 세션 디버깅 로그 추가
     const { id, title, context } = req.body;
     const file = req.file;
     const img = file ? `/uploads/${file.filename}` : null;
+
+    if (!req.session.user || !req.session.user.nickname) {
+      return res.status(401).json({ error: '로그인이 필요합니다.' });
+    }
 
     const memo = await updateMemoById({ id, title, context, img, user: req.session.user.nickname });
     if (!memo) return res.status(404).json({ error: '게시물을 찾을 수 없습니다.' });
@@ -69,11 +74,6 @@ const updateMemo = async (req, res) => {
     if (memo.username !== req.session.user.nickname) {
       return res.status(403).json({ error: '수정 권한이 없습니다.' });
     }
-
-    await pool.query(
-      'UPDATE Memos SET title = ?, context = ?, img = ?, updatedAt = NOW() WHERE id = ?',
-      [title, context, img || memo.img, id]
-    );
 
     res.status(200).json({ message: '게시물이 수정되었습니다.' });
   } catch (err) {

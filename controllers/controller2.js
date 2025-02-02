@@ -17,7 +17,10 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ error: '이미 사용 중인 이메일 또는 닉네임입니다.' });
     }
 
-    res.json({ redirectUrl: `${API_BASE_URL}/2_login` });
+    res.status(200).json({
+      message: '회원가입 완료.',
+      redirectUrl: `${API_BASE_URL}/2_login`,
+    });
   } catch (err) {
     console.error('회원가입 중 오류:', err);
     res.status(500).json({ error: '회원가입 실패' });
@@ -66,15 +69,16 @@ const updatePw = async (req, res) => {
       return res.status(401).json({ error: '로그인이 필요합니다.' });
     }
 
-    const { email = req.session.user.email, password } = req.body;  // ✅ 세션에서 이메일 가져오기
+    const email = req.session.user.email; // ✅ 세션에서 이메일 가져오기
+    const { newPassword } = req.body;
 
-    if (!password) {
+    if (!newPassword) {
       return res.status(400).json({ error: '새 비밀번호를 입력하세요.' });
     }
 
 
     // ✅ 비밀번호 업데이트
-    const updated = await updatePassword(email, password);
+    const updated = await updatePassword(email, newPassword);
     if (!updated) return res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
 
     res.status(200).json({
@@ -97,6 +101,12 @@ const look_my_info = async (req, res) => {
       return res.status(401).json({ error: '로그인이 필요합니다.' });
     }
 
+    if (!nickname) {
+      return res.status(400).json({ error: '닉네임을 입력하세요.' });
+    }
+
+    console.log(`🔹 [DEBUG] 닉네임 변경 요청: ${req.session.user.email} -> ${nickname}`);
+
     const updatedUser = await updateUserInfo(req.session.user.email, nickname, file);
     if (!updatedUser) return res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
 
@@ -116,24 +126,44 @@ const look_my_info = async (req, res) => {
 
 
 const delete_user = async (req, res) => {
+  const connection = await pool.getConnection(); // 🔹 트랜잭션 시작
   try {
-    const { email } = req.body;
-
-    if (!email) {
-      return res.status(400).json({ error: '이메일을 입력하세요.' });
+    if (!req.session.user) {
+      return res.status(401).json({ error: '로그인이 필요합니다.' });
     }
 
-    // ✅ 데이터베이스에서 사용자 조회
-    const [users] = await pool.query('SELECT * FROM Users WHERE email = ?', [email]);
+    const email = req.session.user.email;
 
-    if (users.length === 0) {
+    // ✅ 사용자 정보 조회 (닉네임 포함)
+    const [[user]] = await connection.query('SELECT * FROM Users WHERE email = ?', [email]);
+    if (!user) {
+      connection.release();
       return res.status(404).json({ error: '사용자를 찾을 수 없습니다.' });
     }
 
-    // ✅ 사용자 삭제
-    await pool.query('DELETE FROM Users WHERE email = ?', [email]);
+    const nickname = user.nickname; // 사용자의 닉네임
 
-    // ✅ 세션 삭제
+    await connection.beginTransaction(); // 🔹 트랜잭션 시작
+
+    // ✅ 1. 사용자가 작성한 좋아요 삭제
+    await connection.query('DELETE FROM Likes WHERE userEmail = ?', [email]);
+    console.log(`🔹 [DEBUG] 좋아요 삭제 완료`);
+
+    // ✅ 2. 사용자가 작성한 댓글 삭제
+    await connection.query('DELETE FROM Comments WHERE username = ?', [nickname]);
+    console.log(`🔹 [DEBUG] 댓글 삭제 완료`);
+
+    // ✅ 3. 사용자가 작성한 게시물 삭제 (관련 댓글 및 좋아요도 자동 삭제됨)
+    await connection.query('DELETE FROM Memos WHERE username = ?', [nickname]);
+    console.log(`🔹 [DEBUG] 메모 삭제 완료`);
+
+    // ✅ 4. 최종적으로 사용자 계정 삭제
+    await connection.query('DELETE FROM Users WHERE email = ?', [email]);
+    console.log(`🔹 [DEBUG] 사용자 계정 삭제 완료`);
+
+    await connection.commit(); // 🔹 모든 작업 성공 시 커밋
+
+    // ✅ 세션 삭제 (로그아웃)
     req.session.destroy((err) => {
       if (err) {
         console.error('🔥 [Error] 세션 종료 중 오류 발생:', err);
@@ -142,9 +172,13 @@ const delete_user = async (req, res) => {
       res.status(200).json({ message: '회원 탈퇴가 완료되었습니다.' });
     });
   } catch (err) {
+    await connection.rollback(); // 🔹 오류 발생 시 롤백
     console.error('🔥 [Error] 회원 탈퇴 중 오류 발생:', err);
     res.status(500).json({ error: '회원 탈퇴에 실패했습니다.' });
+  } finally {
+    connection.release(); // 🔹 연결 반환
   }
 };
+
 
 export { registerUser, loginUser, my_info, updatePw, look_my_info, delete_user };
