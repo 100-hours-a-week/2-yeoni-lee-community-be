@@ -1,6 +1,6 @@
 // model.js
 import pool from '../db.js'; // ✅ pool을 추가해야 함
-
+//.then
 // ✅ 사용자 조회
 const getUserByEmail = async (email, password = null) => {
   try {
