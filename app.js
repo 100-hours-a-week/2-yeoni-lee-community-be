@@ -90,13 +90,12 @@ app.get('/test-db', async (req, res) => {
   }
 });
 
-pool.getConnection()
-  .then(conn => {
-    console.log("✅ Database connected!");
+pool.getConnection((err, conn) => {
+  if (err) {
+    console.error('❌ Database connection failed:', err);
+  } else {
+    console.log('✅ Connected to MariaDB');
     conn.release();
-  })
-  .catch(err => {
-    console.error("🔥 [Error] Database connection failed:", err);
-  });
-
+  }
+});
   export const API_BASE_URL = 'http://172.31.0.235:3000';
