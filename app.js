@@ -16,7 +16,7 @@ const PORT = 5000;
 app.use(cors({
   origin: 'http://3.34.144.209:3000',
   credentials: true, 
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH' , 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 /*

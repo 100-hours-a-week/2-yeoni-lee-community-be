@@ -1,6 +1,5 @@
 //controller3.js
 
-import pool from '../db.js';
 import {addCommentToDB, getCommentsFromDB, deleteCommentFromDB,updateCommentInDB } from '../models/model.js';
 
 const addComment = async (req, res) => {
