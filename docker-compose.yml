@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  blue:
+    build: .
+    container_name: express_blue
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+    restart: always
+
+  green:
+    build: .
+    container_name: express_green
+    ports:
+      - "5001:5001"
+    environment:
+      - PORT=5001
+    restart: always

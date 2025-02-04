@@ -10,11 +10,11 @@ import sessionRouter from './routes/session.js'; // 세션 확인 라우터
 import cors from 'cors';
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 // 📌1.  CORS 설정
 app.use(cors({
-  origin: 'http://3.34.144.209:3000',
+  origin: 'http://3.34.144.209:3000', 
   credentials: true, 
   methods: ['GET', 'POST', 'PUT', 'PATCH' , 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -72,7 +72,7 @@ app.use(express.static(path.join(__dirname, '../2-yeoni-lee-community-fe/m_html'
 //app.use(express.static(path.join(process.cwd(), '../2-yeoni-lee-community-fe/m_html')));
 // 4. 라우터 설정
 app.use('/', sessionRouter); // 세션 확인 라우터
-app.use('/', userRoutes); // 메인 라우터
+app.use('/api', userRoutes);
 
 
 // 📌 5. API가 정의되지 않은 경우 404 처리 (JSON 응답)

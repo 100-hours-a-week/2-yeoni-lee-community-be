@@ -23,14 +23,14 @@ const uploadProfile = multer({
 
 ////////////1. 회원가입////////////
 
-router.post('/signup', uploadProfile.single('img'), registerUser);
+router.post('/api/signup', uploadProfile.single('img'), registerUser);
 
 // 2. 로그인
 // 로그인 페이지 서빙
-router.post('/login', loginUser);
+router.post('/api/login', loginUser);
 
 // 로그아웃
-router.post('/logout', (req, res) => {
+router.post('/api/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {
       console.error('로그아웃 중 오류 발생:', err);
@@ -52,30 +52,30 @@ router.get('/api/mod_memo', isAuthenticated, getMemoForEdit);
 router.patch('/mod_memo', isAuthenticated, uploadMemo.single('memo_img'), updateMemo);
 
 ////////////6. 게시물 작성////////////
-router.post('/add_memo', isAuthenticated, uploadMemo.single('memo_img'), addMemo);
+router.post('/api/add_memo', isAuthenticated, uploadMemo.single('memo_img'), addMemo);
 
 ////////게시물 삭제 /delete_memo //////
-router.delete('/delete_memo', isAuthenticated, delete_memo);
+router.delete('/api/delete_memo', isAuthenticated, delete_memo);
 
 //////댓글달기////////
-router.post('/add_comment', isAuthenticated, addComment);
+router.post('/api/add_comment', isAuthenticated, addComment);
 router.get('/api/comments', getComments); 
   // 댓글 삭제 라우트 추가
-router.delete('/delete_comment', isAuthenticated, deleteComment);
-router.patch('/edit_comment', isAuthenticated, updateComment);
+router.delete('/api/delete_comment', isAuthenticated, deleteComment);
+router.patch('/api/edit_comment', isAuthenticated, updateComment);
 
 //////////7. 내 정보 보기////////
 router.get('/api/my_info', isAuthenticated, my_info);
 router.patch('/api/my_info', isAuthenticated, uploadProfile.single('img'), look_my_info);
 //////////8. 비밀번호 수정/////////
 // 비밀번호 수정 데이터 처리
-router.patch('/mod_pw', updatePw);
+router.patch('/api/mod_pw', updatePw);
 //////////회원탈퇴///////////
-router.delete('/delete_user', isAuthenticated, delete_user);
-router.post('/like_memo', isAuthenticated, likeMemo);
+router.delete('/api/delete_user', isAuthenticated, delete_user);
+router.post('/api/like_memo', isAuthenticated, likeMemo);
 /////조회수 /////
-router.post('/increase_view', increaseViewCount);
-router.get('/increase_view', increaseViewCount);
+router.post('/api/increase_view', increaseViewCount);
+router.get('/api/increase_view', increaseViewCount);
 
 
 export default router;
