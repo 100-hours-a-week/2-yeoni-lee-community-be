@@ -27,7 +27,7 @@ router.post('/signup', uploadProfile.single('img'), registerUser);
 
 // 2. 로그인
 // 로그인 페이지 서빙
-router.post('/login', loginUser);
+router.post('/api/login', loginUser);
 
 // 로그아웃
 router.post('/logout', (req, res) => {
